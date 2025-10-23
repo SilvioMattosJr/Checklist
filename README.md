@@ -74,7 +74,3 @@ Contribuição
 Pull requests são bem-vindos. Antes de enviar:
 - Testar em servidor local.
 - Manter consistência de IDs e classes (`required-input`, `required-checkbox`, `.invalid`, `.error-message`).
-
-Licença
--------
-Adicionar sua licença (ex.: MIT) conforme preferir.
