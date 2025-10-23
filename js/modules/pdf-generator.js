@@ -119,7 +119,7 @@ class PdfGenerator {
     }
   }
 
-  // Gerar conteúdo do relatório (mantido igual)
+  // Gerar conteúdo do relatório (CORRIGIDO)
   static generateReportContent() {
     const checklistData = ChecklistManager.getData();
     const signatureData = SignatureManager.getSignatureData();
@@ -141,7 +141,7 @@ class PdfGenerator {
     content += "   de TI, incluindo análise de máquinas, infraestrutura e procedimentos\n";
     content += "   de manutenção preventiva, garantindo o bom funcionamento dos sistemas.\n\n";
     
-    // Máquinas
+    // ✅ CORREÇÃO 1: Seção de Máquinas agora é condicional
     if (checklistData.machines && checklistData.machines.length > 0) {
       content += "🔹 MÁQUINAS VERIFICADAS\n\n";
       
@@ -187,15 +187,15 @@ class PdfGenerator {
       });
     }
     
-    // Infraestrutura
+    // ✅ CORREÇÃO 2: Seção de Infraestrutura agora é condicional
     if (checklistData.infrastructures && checklistData.infrastructures.length > 0) {
       content += "🔹 INFRAESTRUTURA VERIFICADA\n\n";
       
       checklistData.infrastructures.forEach((infra, index) => {
         content += `🏗️ ITEM ${index + 1}\n`;
+        // ✅ CORREÇÃO 3: Imprime apenas a descrição, sem concatenar o status
         if (infra.description) content += `   Descrição: ${infra.description}\n`;
         if (infra.location) content += `   Localização: ${infra.location}\n`;
-        if (infra.status) content += `   Status: ${infra.status}\n`;
         if (infra.notes) content += `   Observações: ${infra.notes}\n`;
         content += "\n";
       });
@@ -413,15 +413,15 @@ class PdfGenerator {
     
     yPosition += 5; // Espaço extra após o resumo
     
-    // Máquinas (MANTIDO ORIGINAL + IMAGENS)
-    yPosition += 10;
-    pdf.setFontSize(11);
-    pdf.setFont("helvetica", "bold");
-    pdf.text('MÁQUINAS VERIFICADAS:', leftMargin, yPosition);
-    pdf.setFontSize(9);
-    pdf.setFont("helvetica", "normal");
-    
+    // ✅ CORREÇÃO 1: Seção de Máquinas agora é condicional no PDF
     if (checklistData.machines && checklistData.machines.length > 0) {
+      yPosition += 10;
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "bold");
+      pdf.text('MÁQUINAS VERIFICADAS:', leftMargin, yPosition);
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      
       for (let i = 0; i < checklistData.machines.length; i++) {
         const machine = checklistData.machines[i];
         
@@ -441,6 +441,17 @@ class PdfGenerator {
         if (machine.os) {
           yPosition += 4;
           pdf.text(`Sistema: ${machine.os}`, leftMargin + 10, yPosition);
+        }
+        
+        // ✅ MELHORIA: Adicionar Armazenamento e RAM no PDF
+        if (machine.storage) {
+          yPosition += 4;
+          pdf.text(`Armazenamento: ${machine.storage}`, leftMargin + 10, yPosition);
+        }
+        
+        if (machine.ram) {
+          yPosition += 4;
+          pdf.text(`Memória RAM: ${machine.ram}`, leftMargin + 10, yPosition);
         }
         
         if (machine.anydesk) {
@@ -491,7 +502,7 @@ class PdfGenerator {
       }
     }
     
-    // Infraestrutura (MANTIDO ORIGINAL + IMAGENS)
+    // ✅ CORREÇÃO 2: Seção de Infraestrutura agora é condicional no PDF
     if (checklistData.infrastructures && checklistData.infrastructures.length > 0) {
       // Verificar se precisa de nova página
       if (yPosition > (297 - bottomMargin - 30)) {
@@ -522,7 +533,14 @@ class PdfGenerator {
         }
         
         yPosition += 5;
-        pdf.text(`• ${infra.description || 'Item'} - ${infra.status || 'Status'}`, leftMargin + 5, yPosition);
+        // ✅ CORREÇÃO 3: Imprime apenas a descrição, sem concatenar o status
+        pdf.text(`• ${infra.description || 'Item não descrito'}`, leftMargin + 5, yPosition);
+        
+        // ✅ MELHORIA: Adicionar localização da infraestrutura
+        if (infra.location) {
+          yPosition += 4;
+          pdf.text(`Localização: ${infra.location}`, leftMargin + 10, yPosition);
+        }
         
         if (infra.notes) {
           yPosition += 4;
@@ -769,7 +787,8 @@ class PdfGenerator {
         // CORREÇÃO: Adicionar status para MÁQUINAS e INFRAESTRUTURA
         if (photo.status) {
           pdf.setFontSize(5);
-          pdf.setTextColor(100, 100, 100);
+          // ✅ MELHORIA: Mudar cor do status para preto para melhor legibilidade
+          pdf.setTextColor(0, 0, 0); 
           const statusText = `Status: ${this.getCleanStatusText(photo.status)}`;
           pdf.text(statusText, x + 2, textY + 1);
         }
