@@ -29,102 +29,28 @@ class PdfGenerator {
     return techName || 'Nome do Técnico';
   }
 
-  // Manipular geração de relatório
+  // ✅ MUDANÇA: Manipular geração de relatório (SIMPLIFICADO)
   static handleGenerateReport() {
     console.log('🎯 Botão gerar relatório clicado!');
     
-    try {
-      // Validar formulário principal
-      const formValidation = FormValidator.validateForm();
-      console.log('📋 Validação do formulário:', formValidation);
-      
-      // Validar assinaturas
-      const signatureValidation = FormValidator.validateSignatures();
-      console.log('🖊️ Validação de assinaturas:', signatureValidation);
-      
-      const allMissingFields = [
-        ...formValidation.missingFields, 
-        ...signatureValidation.missingFields
-      ];
-      
-      console.log('📝 Todos os campos faltando:', allMissingFields);
-      
-      if (!formValidation.isValid || !signatureValidation.isValid) {
-        console.log('❌ Formulário inválido, mostrando modal de campos pendentes');
-        this.showMissingFieldsModal(allMissingFields);
-        return;
-      }
-      
-      console.log('✅ Formulário válido, mostrando modal de relatório');
-      this.showReportModal();
-      
-    } catch (error) {
-      console.error('💥 Erro ao gerar relatório:', error);
-      alert('Erro ao gerar relatório. Verifique o console.');
-    }
-  }
-
-  // Mostrar modal de campos pendentes
-  static showMissingFieldsModal(missingFields) {
-    console.log('🔄 Mostrando modal de campos pendentes:', missingFields);
+    // Validar formulário principal
+    const formValidation = FormValidator.validateForm();
+    console.log('📋 Validação do formulário:', formValidation);
     
-    const modal = document.getElementById('missingFieldsModal');
-    const list = document.getElementById('missingFieldsList');
+    // Validar assinaturas
+    const signatureValidation = FormValidator.validateSignatures();
+    console.log('🖊️ Validação de assinaturas:', signatureValidation);
     
-    if (!modal || !list) {
-      console.log('📦 Criando modal de campos pendentes...');
-      this.createMissingFieldsModal();
+    // Se a validação falhar, não faz nada. O botão permanecerá desabilitado
+    // e o card de aviso na página guiará o usuário.
+    if (!formValidation.isValid || !signatureValidation.isValid) {
+      console.log('❌ Formulário inválido. Ação de gerar relatório foi bloqueada.');
+      return;
     }
     
-    // Limpar lista anterior
-    const listElement = document.getElementById('missingFieldsList');
-    if (listElement) {
-      listElement.innerHTML = '';
-      
-      // Adicionar campos pendentes
-      missingFields.forEach(field => {
-        const li = document.createElement('li');
-        li.textContent = field;
-        listElement.appendChild(li);
-      });
-    }
-    
-    // Abrir modal
-    if (typeof ModalManager !== 'undefined') {
-      ModalManager.openModal('missingFieldsModal');
-    } else {
-      console.error('❌ ModalManager não encontrado!');
-      // Fallback: mostrar alerta simples
-      alert(`Campos obrigatórios pendentes:\n\n${missingFields.join('\n')}`);
-    }
-  }
-
-  // Criar modal de campos pendentes
-  static createMissingFieldsModal() {
-    const modalHTML = `
-      <div class="modal-overlay" id="missingFieldsModal">
-        <div class="modal">
-          <div class="modal-header">
-            <h3 class="modal-title">Campos Obrigatórios Pendentes</h3>
-          </div>
-          <div class="modal-content">
-            <p>Por favor, preencha os seguintes campos obrigatórios antes de gerar o relatório:</p>
-            <ul class="missing-fields-list" id="missingFieldsList"></ul>
-          </div>
-          <div class="modal-actions">
-            <button onclick="PdfGenerator.closeModal('missingFieldsModal')">
-              <i data-lucide="check"></i> OK
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    if (typeof lucide !== 'undefined') {
-      setTimeout(() => lucide.createIcons(), 100);
-    }
+    // Se a validação passar, prossegue com a geração
+    console.log('✅ Formulário válido, gerando relatório...');
+    this.showReportModal();
   }
 
   // Mostrar modal de relatório

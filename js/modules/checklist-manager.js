@@ -1,5 +1,8 @@
 // Gerenciador principal do checklist
 class ChecklistManager {
+  static machineCounter = 0;
+  static infraCounter = 0;
+  
   static init() {
     this.machineCounter = 0;
     this.infraCounter = 0;
@@ -282,7 +285,7 @@ class ChecklistManager {
     const photoHTML = `
       <div class="photo-item" data-photo-index="${photoIndex}">
         <div class="photo-header">
-          <h4>Foto ${photoIndex}</h4>
+
           <button type="button" class="btn-remove-photo" onclick="ChecklistManager.removePhoto(this)">
             <i data-lucide="trash-2"></i>
           </button>
@@ -293,7 +296,7 @@ class ChecklistManager {
             <img class="photo-preview" style="display:none;" />
             <div class="photo-placeholder">
               <i data-lucide="camera"></i>
-              <span>Clique para adicionar foto</span>
+              <span>⇊ Escolher arquivo ⇊</span>
             </div>
           </div>
           
@@ -416,22 +419,36 @@ class ChecklistManager {
     reader.readAsDataURL(file);
   }
 
-  // Tirar foto com câmera
+  // Tirar foto com câmera (MELHORADO COM ALTA QUALIDADE)
   static async takePhoto(button) {
+    console.log('📸 Tentando acessar a câmera com alta qualidade...');
     try {
+      // Verificar se a API de câmera está disponível
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('A API de câmera não é suportada pelo seu navegador.');
+      }
+      
+      // ✅ MELHORIA DE QUALIDADE: Definir constraints para solicitar uma resolução alta
+      const constraints = {
+        video: {
+          width: { ideal: 1920 },  // Largura ideal (Full HD)
+          height: { ideal: 1080 }, // Altura ideal (Full HD)
+          facingMode: 'environment' // Prioriza a câmera traseira em dispositivos móveis
+        }
+      };
+      
+      console.log('🔧 Solicitando câmera com as seguintes restrições:', constraints);
+      
+      // Acessar a câmera com as novas restrições
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      
+      console.log('✅ Câmera acessada com sucesso. Resolução do stream:', 
+                  `${stream.getVideoTracks()[0].getSettings().width}x${stream.getVideoTracks()[0].getSettings().height}`);
+                  
       const photoItem = button.closest('.photo-item');
       const preview = photoItem.querySelector('.photo-preview');
       const placeholder = photoItem.querySelector('.photo-placeholder');
       const fileInput = photoItem.querySelector('.photo-input');
-      
-      // Verificar se a API de câmera está disponível
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        alert('A câmera não está disponível neste dispositivo.');
-        return;
-      }
-      
-      // Acessar a câmera
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       
       // Criar elemento de vídeo temporário
       const video = document.createElement('video');
@@ -443,15 +460,29 @@ class ChecklistManager {
       document.body.appendChild(cameraOverlay);
       
     } catch (error) {
-      console.error('Erro ao acessar a câmera:', error);
-      alert('Erro ao acessar a câmera. Verifique as permissões.');
+      console.error('❌ Erro ao acessar a câmera:', error);
+      let errorMessage = 'Não foi possível acessar a câmera.';
+      if (error.name === 'NotAllowedError') {
+        errorMessage = 'Permissão para acessar a câmera foi negada. Por favor, permita o acesso nas configurações do seu navegador.';
+      } else if (error.name === 'NotFoundError') {
+        errorMessage = 'Nenhuma câmera foi encontrada no dispositivo.';
+      } else if (error.name === 'OverconstrainedError' || error.name === 'ConstraintNotSatisfiedError') {
+        errorMessage = 'A câmera do seu dispositivo não suporta a resolução solicitada. Tentando com qualidade padrão...';
+        // Opcional: aqui você poderia tentar novamente com constraints menores como fallback
+        alert(errorMessage);
+        return; // Interrompe a execução por enquanto
+      } else if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+        errorMessage = 'Acesso à câmera requer uma conexão segura (HTTPS) ou execução em localhost (servidor local).';
+      }
+      alert(errorMessage);
     }
   }
 
-  // Criar overlay da câmera
+  // Criar overlay da câmera (MELHORADO)
   static createCameraOverlay(video, stream, preview, placeholder, fileInput) {
     const overlay = document.createElement('div');
     overlay.className = 'camera-overlay';
+    overlay.style.zIndex = '4000'; // Garante que fique acima de tudo
     
     overlay.innerHTML = `
       <div class="camera-modal">
@@ -481,19 +512,28 @@ class ChecklistManager {
     const closeBtn = overlay.querySelector('.btn-close-camera');
     const captureBtn = overlay.querySelector('.btn-capture');
     
-    closeBtn.onclick = () => {
+    const cleanup = () => {
       stream.getTracks().forEach(track => track.stop());
       document.body.removeChild(overlay);
     };
+
+    closeBtn.onclick = cleanup;
     
     captureBtn.onclick = () => {
       this.capturePhoto(video, preview, placeholder, fileInput, stream, overlay);
     };
     
+    // Fechar ao clicar fora do modal
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            cleanup();
+        }
+    });
+
     return overlay;
   }
 
-  // Capturar foto da câmera
+  // Capturar foto da câmera (MELHORADO)
   static capturePhoto(video, preview, placeholder, fileInput, stream, overlay) {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
@@ -504,7 +544,8 @@ class ChecklistManager {
     
     // Converter para blob e criar arquivo
     canvas.toBlob((blob) => {
-      const file = new File([blob], `camera-photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+      const fileName = `camera-photo-${Date.now()}.jpg`;
+      const file = new File([blob], fileName, { type: 'image/jpeg' });
       
       // Atualizar preview
       preview.src = URL.createObjectURL(blob);
@@ -515,6 +556,11 @@ class ChecklistManager {
       const dataTransfer = new DataTransfer();
       dataTransfer.items.add(file);
       fileInput.files = dataTransfer.files;
+      
+      // ✅ MELHORIA: Disparar evento 'change' para ativar validação em tempo real
+      fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+      
+      console.log('📸 Foto capturada e salva com sucesso.');
       
       // Fechar câmera e remover overlay
       stream.getTracks().forEach(track => track.stop());

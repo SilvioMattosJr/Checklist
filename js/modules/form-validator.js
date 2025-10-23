@@ -45,16 +45,17 @@ class FormValidator {
       }
     });
 
-    // ✅ CORREÇÃO CRÍTICA: Validar se há pelo menos uma máquina
+    // ✅ MUDANÇA CRÍTICA: Validar se há PELO MENOS UMA máquina OU UMA infraestrutura
     const machines = document.querySelectorAll('.machine-block');
-    console.log(`🔍 [VALIDATOR] Máquinas encontradas: ${machines.length}`);
+    const infras = document.querySelectorAll('.infra-block');
+    console.log(`🔍 [VALIDATOR] Máquinas encontradas: ${machines.length}, Infraestruturas encontradas: ${infras.length}`);
     
-    if (machines.length === 0) {
+    if (machines.length === 0 && infras.length === 0) {
       isValid = false;
-      missingFields.push('Adicionar pelo menos uma máquina');
-      console.log('❌ [VALIDATOR] Nenhuma máquina adicionada');
+      missingFields.push('Adicionar pelo menos uma máquina ou infraestrutura');
+      console.log('❌ [VALIDATOR] Nenhuma máquina ou infraestrutura adicionada');
     } else {
-      console.log(`✅ [VALIDATOR] ${machines.length} máquina(s) adicionada(s)`);
+      console.log(`✅ [VALIDATOR] Itens de hardware adicionados: ${machines.length} máquina(s) e ${infras.length} infraestrutura(s)`);
     }
 
     // ✅ CORREÇÃO CRÍTICA: Validar campos obrigatórios das máquinas (MELHOR DETECÇÃO)
@@ -115,9 +116,6 @@ class FormValidator {
     });
 
     // ✅ CORREÇÃO CRÍTICA: Validar infraestruturas (MELHOR DETECÇÃO)
-    const infras = document.querySelectorAll('.infra-block');
-    console.log(`🔍 [VALIDATOR] Infraestruturas encontradas: ${infras.length}`);
-    
     infras.forEach((infra, index) => {
       const infraNumber = index + 1;
       console.log(`🔍 [VALIDATOR] Validando infraestrutura ${infraNumber}...`);

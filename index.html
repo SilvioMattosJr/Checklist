@@ -41,6 +41,15 @@
     <h1>Checklist – Preventivas</h1>
     <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
     
+    <!-- NOVO: Card de Aviso de Validação -->
+    <div class="validation-warning-card">
+      <i data-lucide="info"></i>
+      <p>
+        <strong>Atenção:</strong> Para gerar o relatório, todos os campos obrigatórios devem ser preenchidos. 
+        É necessário adicionar <strong>pelo menos uma máquina ou uma infraestrutura</strong> e preencher as assinaturas.
+      </p>
+    </div>
+    
     <!-- Checklist Sections -->
     <section class="card" id="arrival-section">
       <h2><i data-lucide="user-check"></i> Ao Chegar no Cliente</h2>
@@ -70,9 +79,12 @@
     
     <!-- Actions -->
     <div class="buttons-container">
-      <button id="generateReportBtn" onclick="PdfGenerator.handleGenerateReport()" class="btn-disabled">
-        <i data-lucide="file-text"></i><b>Gerar Relatório</b>
-      </button>
+      <!-- MUDANÇA: Botão envolto em uma div para ser clicável mesmo desabilitado -->
+      <div onclick="PdfGenerator.handleGenerateReport()">
+        <button id="generateReportBtn" class="btn-disabled" disabled>
+          <i data-lucide="file-text"></i><b>Gerar Relatório</b>
+        </button>
+      </div>
     </div>
     
     <section class="card" id="closure-section">
@@ -93,24 +105,6 @@
         <button onclick="PdfGenerator.saveAsPDF()"><i data-lucide="file-text"></i> Salvar como PDF</button>
         <button onclick="PdfGenerator.copyToClipboard()"><i data-lucide="copy"></i> Copiar</button>
         <button onclick="ModalManager.closeModal('reportModal')"><i data-lucide="x"></i> Cancelar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal de Campos Pendentes -->
-  <div class="modal-overlay" id="missingFieldsModal">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 class="modal-title">Campos Obrigatórios Pendentes</h3>
-      </div>
-      <div class="modal-content">
-        <p>Por favor, preencha os seguintes campos obrigatórios antes de gerar o relatório:</p>
-        <ul class="missing-fields-list" id="missingFieldsList"></ul>
-      </div>
-      <div class="modal-actions">
-        <button onclick="ModalManager.closeModal('missingFieldsModal')">
-          <i data-lucide="check"></i> OK
-        </button>
       </div>
     </div>
   </div>
