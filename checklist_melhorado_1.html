@@ -1,0 +1,3849 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checklist – Preventivas</title>
+  <link href="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff7a00;
+      --primary-dark: #ffa94d;
+      --bg-light: #e8e8e8;
+      --bg-dark: #1a1a1a;
+      --text-light: #333;
+      --text-dark: #f5f5f5;
+      --input-light: #e8e8e8;
+      --input-dark: #1a1a1a;
+      --border-light: #ccc;
+      --border-dark: #555;
+      --card-radius: 12px;
+      --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      --checkbox-unchecked: #ffd8b3;
+      --radio-unchecked: #ffd8b3;
+      --error-color: #ff3860;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: all 0.3s ease;
+    }
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    
+    /* Estilos para o dropdown */
+    .dropdown-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    .theme-toggle {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      background: var(--primary-dark);
+    }
+    .dropdown-menu {
+      position: absolute;
+      bottom: 60px;
+      right: 0;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border: 2px solid var(--primary);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      min-width: 220px;
+      overflow: hidden;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+    }
+    body.dark .dropdown-menu {
+      background-color: #2a2a2a;
+    }
+    .dropdown-menu.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-menu button {
+      width: 90%;
+      margin: 0 auto;
+      padding: 12px 16px;
+      text-align: center;
+      background: none;
+      border: none;
+      border-radius: 6px;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 500;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    .dropdown-menu button:last-child {
+      margin-bottom: 0;
+    }
+    body.dark .dropdown-menu button {
+      color: var(--text-dark);
+    }
+    .dropdown-menu button:hover {
+      background-color: rgba(255, 122, 0, 0.15);
+      transform: translateX(-2px);
+    }
+    .dropdown-menu button i {
+      color: var(--primary);
+      font-size: 18px;
+    }
+    .dropdown-menu button span {
+      flex-grow: 1;
+    }
+    
+    h1 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 2rem;
+    }
+    h2, h3 {
+      text-align: center;
+      color: var(--primary);
+      margin: 1.5rem 0;
+    }
+    h2 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2rem;
+    }
+    .card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 1rem 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s ease;
+      border: 1px solid var(--primary);
+    }
+    body.dark .card {
+      background: #2a2a2a;
+      border: 1px solid var(--primary);
+    }
+    input[type="text"],
+    textarea,
+    input[type="date"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--primary);
+      background-color: var(--input-light);
+      color: var(--primary);
+      margin: 12px 0;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+      opacity: 0.9;
+    }
+    input[type="text"]::placeholder,
+    textarea::placeholder {
+      color: var(--primary);
+      opacity: 0.7;
+    }
+    body.dark input[type="text"],
+    body.dark textarea,
+    body.dark input[type="date"],
+    body.dark input[type="file"],
+    body.dark select {
+      background-color: var(--input-dark);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+    body.dark input[type="text"]::placeholder,
+    body.dark textarea::placeholder {
+      color: var(--primary);
+    }
+    .input-group {
+      margin: 12px 0;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 500;
+      color: var(--primary);
+      opacity: 0.9;
+    }
+    /* Estilo dos checkboxes */
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--checkbox-unchecked);
+      border-radius: 4px;
+      margin-right: 8px;
+      position: relative;
+      top: -1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    input[type="checkbox"]:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    input[type="checkbox"]:checked::before {
+      content: "✓";
+      position: absolute;
+      color: white;
+      font-size: 12px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    /* Estilo dos radios */
+    input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--radio-unchecked);
+      border-radius: 50%;
+      margin-right: 8px;
+      position: relative;
+      top: -1px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    input[type="radio"]:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    label {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      cursor: pointer;
+    }
+    fieldset {
+      border: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+    fieldset legend {
+      text-align: center;
+      color: var(--primary);
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+    .machine-block, .infra-block {
+      margin-bottom: 2rem;
+    }
+    .windows-not-activated {
+      display: none;
+    }
+    .buttons-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    button {
+      background-color: var(--primary);
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 250px;
+      max-width: 100%;
+      font-weight: bold;
+      margin: 0 auto;
+    }
+    button:hover {
+      background-color: #e06e00;
+    }
+    .btn-disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .btn-disabled:hover {
+      background-color: #cccccc;
+    }
+    /* Barra de progresso */
+    .progress {
+      width: 100%;
+      height: 10px;
+      background: var(--checkbox-unchecked);
+      border-radius: 5px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .photo-upload {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .photo-upload-preview {
+      max-width: 100%;
+      height: auto;
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+    /* Modal styles */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      border-radius: var(--card-radius);
+      padding: 2rem;
+      max-width: 900px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--primary);
+      position: relative;
+    }
+    body.dark .modal {
+      background-color: #2a2a2a;
+      color: var(--text-dark);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--primary);
+      padding-bottom: 0.5rem;
+    }
+    .modal-title {
+      color: var(--primary);
+      margin: 0;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .modal-content {
+      margin-bottom: 1.5rem;
+      white-space: pre-line;
+      line-height: 1.6;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .modal-actions button {
+      margin: 0;
+      min-width: 150px;
+    }
+    /* Estilos para campos obrigatórios */
+    .required-label::after {
+      content: " *";
+      color: var(--error-color);
+      font-weight: bold;
+    }
+    .invalid {
+      border: 2px solid var(--error-color) !important;
+    }
+    .error-message {
+      color: var(--error-color);
+      font-size: 0.9rem;
+      margin-top: 5px;
+      display: none;
+    }
+    .missing-fields-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 15px 0 0 0;
+    }
+    .missing-fields-list li {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .missing-fields-list li::before {
+      content: "•";
+      color: var(--error-color);
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    
+    /* Estilos para abas */
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+      overflow-x: auto;
+    }
+    .tab {
+      padding: 12px 20px;
+      cursor: pointer;
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      margin-right: 5px;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    body.dark .tab {
+      background-color: #3a3a3a;
+      border-color: #555;
+      color: var(--text-dark);
+    }
+    .tab.active {
+      background-color: white;
+      border-bottom: 2px solid white;
+      margin-bottom: -2px;
+      color: var(--primary);
+      font-weight: bold;
+    }
+    body.dark .tab.active {
+      background-color: #2a2a2a;
+      border-bottom: 2px solid #2a2a2a;
+    }
+    .tab:hover:not(.active) {
+      background-color: #e9ecef;
+    }
+    body.dark .tab:hover:not(.active) {
+      background-color: #4a4a4a;
+    }
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Estilos para templates */
+    .template-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    .template-card {
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: white;
+      position: relative;
+      overflow: hidden;
+    }
+    body.dark .template-card {
+      background: #3a3a3a;
+      border-color: #555;
+    }
+    .template-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 122, 0, 0.15);
+    }
+    .template-card.selected {
+      border-color: var(--primary);
+      background: rgba(255, 122, 0, 0.05);
+    }
+    body.dark .template-card.selected {
+      background: rgba(255, 122, 0, 0.1);
+    }
+    .template-preview {
+      width: 100%;
+      height: 120px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      color: #6c757d;
+    }
+    .template-modern .template-preview {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+    .template-corporate .template-preview {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: white;
+    }
+    .template-minimal .template-preview {
+      background: linear-gradient(135deg, #f8f9fa, #ffffff);
+      border: 2px solid #dee2e6;
+      color: #495057;
+    }
+    .template-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .template-description {
+      font-size: 14px;
+      color: #6c757d;
+      line-height: 1.4;
+    }
+    body.dark .template-description {
+      color: #adb5bd;
+    }
+    
+    /* Estilos para personalização de cores */
+    .color-picker-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .color-picker-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .color-picker-item label {
+      font-weight: 500;
+      color: var(--primary);
+    }
+    .color-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    input[type="color"] {
+      width: 50px;
+      height: 40px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+    }
+    .color-hex-input {
+      flex: 1;
+      margin: 0;
+    }
+    
+    /* Estilos para personalização de texto */
+    .text-customization {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    .font-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .font-preview {
+      padding: 15px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      margin-top: 10px;
+      background: white;
+      text-align: center;
+    }
+    body.dark .font-preview {
+      background: #3a3a3a;
+      border-color: #555;
+    }
+    .font-size-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+    .font-size-input {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .font-size-input input[type="range"] {
+      flex: 1;
+      margin: 0;
+    }
+    .font-size-input span {
+      min-width: 40px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .font-style-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .style-toggle {
+      padding: 10px 16px;
+      border: 2px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      width: auto;
+      min-width: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    .style-toggle.active {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
+    }
+    .alignment-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+      justify-content: center;
+    }
+    .alignment-btn {
+      width: 45px;
+      height: 45px;
+      border: 2px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .alignment-btn.active {
+      background: var(--primary);
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 122, 0, 0.3);
+    }
+    .alignment-btn:hover:not(.active) {
+      background: rgba(255, 122, 0, 0.1);
+    }
+    
+    /* Controles avançados de texto */
+    .advanced-text-controls {
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      background: rgba(255, 122, 0, 0.05);
+    }
+    body.dark .advanced-text-controls {
+      background: rgba(255, 122, 0, 0.1);
+    }
+    .advanced-text-title {
+      color: var(--primary);
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .text-spacing-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .spacing-control {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .spacing-control label {
+      font-weight: 500;
+      color: var(--primary);
+      font-size: 14px;
+    }
+    .spacing-slider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .spacing-slider input[type="range"] {
+      flex: 1;
+      margin: 0;
+    }
+    .spacing-value {
+      min-width: 50px;
+      font-weight: bold;
+      color: var(--primary);
+      font-size: 14px;
+    }
+    
+    /* Seletor de cores para texto */
+    .text-color-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .text-color-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .text-color-item label {
+      font-weight: 500;
+      color: var(--primary);
+      font-size: 14px;
+    }
+    .color-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .color-input-group input[type="color"] {
+      width: 40px;
+      height: 35px;
+      border: 2px solid var(--primary);
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+    }
+    .color-input-group input[type="text"] {
+      flex: 1;
+      margin: 0;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    
+    /* Prévia de texto em tempo real */
+    .text-preview-section {
+      border: 2px solid #28a745;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      background: rgba(40, 167, 69, 0.05);
+    }
+    body.dark .text-preview-section {
+      background: rgba(40, 167, 69, 0.1);
+    }
+    .text-preview-title {
+      color: #28a745;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .text-preview-content {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      min-height: 150px;
+    }
+    body.dark .text-preview-content {
+      background: #3a3a3a;
+      border-color: #555;
+    }
+    .preview-title {
+      margin-bottom: 10px;
+    }
+    .preview-subtitle {
+      margin-bottom: 15px;
+    }
+    .preview-body {
+      margin-bottom: 10px;
+    }
+    .preview-footer {
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #ddd;
+    }
+    body.dark .preview-footer {
+      border-top-color: #555;
+    }
+    
+    /* Estilos para pré-visualização do PDF */
+    .pdf-preview {
+      margin-top: 20px;
+    }
+    .pdf-preview-title {
+      color: var(--primary);
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .pdf-preview-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 2px solid var(--primary);
+    }
+    body.dark .pdf-preview-container {
+      background: #2a2a2a;
+    }
+    .pdf-page-preview {
+      width: 100%;
+      max-width: 595px; /* Largura A4 em pixels (210mm) */
+      aspect-ratio: 210/297; /* Proporção A4 */
+      background: white;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .pdf-preview-content {
+      width: 100%;
+      height: 100%;
+      padding: 40px 30px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      font-size: 12px;
+      line-height: 1.4;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .pdf-header {
+      text-align: center;
+      margin-bottom: 30px;
+      flex-shrink: 0;
+    }
+    .pdf-logo-container {
+      margin-bottom: 15px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pdf-logo-container img {
+      max-height: 100%;
+      max-width: 200px;
+      object-fit: contain;
+    }
+    .pdf-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+    .pdf-company-info {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+    .pdf-body {
+      flex: 1;
+      overflow: hidden;
+    }
+    .pdf-content-section {
+      margin-bottom: 20px;
+    }
+    .pdf-content-section h2 {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+      border-bottom: 2px solid #ff7a00;
+      padding-bottom: 5px;
+    }
+    .pdf-content-section p {
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+    .pdf-footer {
+      flex-shrink: 0;
+      border-top: 1px solid #ddd;
+      padding-top: 15px;
+      font-size: 10px;
+      color: #666;
+      text-align: center;
+    }
+    .pdf-navigation {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .pdf-navigation button {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+    .pdf-navigation button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .pdf-navigation span {
+      font-weight: 500;
+      color: var(--primary);
+      min-width: 100px;
+      text-align: center;
+    }
+    
+    /* Responsividade para pré-visualização */
+    @media (max-width: 768px) {
+      .pdf-preview-container {
+        padding: 10px;
+      }
+      .pdf-page-preview {
+        max-width: 100%;
+      }
+      .pdf-preview-content {
+        padding: 20px 15px;
+        font-size: 10px;
+      }
+      .pdf-title {
+        font-size: 18px;
+      }
+      .pdf-content-section h2 {
+        font-size: 14px;
+      }
+      .pdf-logo-container {
+        height: 40px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .pdf-preview-content {
+        padding: 15px 10px;
+        font-size: 9px;
+      }
+      .pdf-title {
+        font-size: 16px;
+      }
+      .pdf-content-section h2 {
+        font-size: 12px;
+      }
+      .pdf-navigation {
+        gap: 10px;
+      }
+      .pdf-navigation button {
+        width: 35px;
+        height: 35px;
+      }
+    }
+    
+    /* Estilos para upload de logo */
+    .logo-upload-section {
+      border: 2px dashed #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    .logo-upload-section:hover {
+      border-color: var(--primary);
+      background: rgba(255, 122, 0, 0.05);
+    }
+    .logo-preview {
+      max-width: 200px;
+      max-height: 100px;
+      margin: 15px auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .logo-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    /* Estilos para configurações de segurança */
+    .security-section {
+      border: 2px solid #e74c3c;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: rgba(231, 76, 60, 0.05);
+    }
+    .security-title {
+      color: #e74c3c;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .watermark-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    
+    /* Estilos para campos extras */
+    .extra-fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    /* Estilos para configurações salvas */
+    .saved-configs {
+      border: 2px solid #28a745;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background: rgba(40, 167, 69, 0.05);
+    }
+    .saved-configs-title {
+      color: #28a745;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .config-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      background: white;
+    }
+    body.dark .config-item {
+      background: #3a3a3a;
+      border-color: #555;
+    }
+    .config-actions {
+      display: flex;
+      gap: 5px;
+    }
+    .config-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+      width: auto;
+      min-width: auto;
+    }
+    
+    /* Estilos para assinaturas */
+    .signature-preview {
+      height: 150px;
+      border: 2px solid var(--primary);
+      border-radius: var(--card-radius);
+      background-color: var(--bg-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    body.dark .signature-preview {
+      background-color: var(--bg-dark);
+    }
+    .signature-preview p {
+      color: var(--primary);
+      text-align: center;
+      padding: 20px;
+    }
+    .signature-preview img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    #signatureCanvas {
+      width: 100%;
+      height: 200px;
+      border: 2px solid var(--primary);
+      border-radius: var(--card-radius);
+      touch-action: none;
+      background-color: var(--bg-light);
+    }
+    body.dark #signatureCanvas {
+      background-color: var(--bg-dark);
+    }
+    
+    @media (max-width: 600px) {
+      button,
+      input,
+      textarea {
+        width: 100%;
+      }
+      
+      .dropdown-container {
+        bottom: 10px;
+        right: 10px;
+      }
+      
+      .theme-toggle {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .dropdown-menu {
+        bottom: 50px;
+        right: 0;
+        min-width: 180px;
+      }
+      
+      .modal-actions {
+        flex-direction: column;
+      }
+      .modal-actions button {
+        width: 100%;
+      }
+      .tabs {
+        flex-wrap: wrap;
+      }
+      .tab {
+        flex: 1;
+        min-width: 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dropdown-container">
+    <button class="theme-toggle" onclick="toggleDropdown()" aria-label="Menu de opções">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="1"></circle>
+        <circle cx="12" cy="5" r="1"></circle>
+        <circle cx="12" cy="19" r="1"></circle>
+      </svg>
+    </button>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <button onclick="addMachine(); toggleDropdown();">
+        <i data-lucide="monitor-smartphone" width="18" height="18"></i>
+        <span>Adicionar Máquina</span>
+      </button>
+      <button onclick="addInfra(); toggleDropdown();">
+        <i data-lucide="camera" width="18" height="18"></i>
+        <span>Adicionar Infraestrutura</span>
+      </button>
+      <button onclick="toggleTheme(); toggleDropdown();">
+        <i data-lucide="palette" width="18" height="18"></i>
+        <span>Trocar Tema</span>
+      </button>
+    </div>
+  </div>
+  
+  <div class="container">
+    <h1>Checklist – Preventivas</h1>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <section class="card">
+      <h2><i data-lucide="user-check"></i> Ao Chegar no Cliente</h2>
+      <label><input type="checkbox" class="required-checkbox"> Abrir chamado no Milvus<span class="required-asterisk">*</span></label>
+      <label><input type="checkbox" class="required-checkbox"> Iniciar atendimento<span class="required-asterisk">*</span></label>
+    </section>
+    
+    <div id="machines"></div>
+    <div id="infraestruturas"></div>
+    <section class="card">
+      <h2><i data-lucide="users"></i> Treinamento</h2>
+      <label><input type="checkbox"> Demonstrar como abrir chamado via Client Core Helpdesk</label>
+    </section>
+    <section class="card">
+      <h2><i data-lucide="file-text"></i> Relatório</h2>
+      <textarea id="observacoes" placeholder="Registrar observações técnicas e recomendações"></textarea>
+    </section>
+    
+    <!-- Seção de Assinaturas -->
+    <section class="card">
+      <h2><i data-lucide="pen-square"></i> Assinaturas</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 20px;">
+        <!-- Assinatura do Cliente -->
+        <div style="flex: 1; min-width: 250px;">
+          <div class="signature-preview" id="clientSignaturePreview">
+            <p>Nenhuma assinatura registrada</p>
+          </div>
+          <button onclick="openSignatureModal('client')" style="width: 100%;"><i data-lucide="pen-line"></i> Assinar</button>
+          <div class="input-group" style="margin-top: 15px;">
+            <label style="color: var(--primary);">Nome do responsável</label>
+            <input type="text" id="clientName" placeholder="Digite o nome do responsável">
+          </div>
+        </div>
+        
+        <!-- Assinatura do Técnico -->
+        <div style="flex: 1; min-width: 250px;">
+          <div class="signature-preview" id="techSignaturePreview">
+            <p>Nenhuma assinatura registrada</p>
+          </div>
+          <button onclick="openSignatureModal('tech')" style="width: 100%;"><i data-lucide="pen-line"></i> Assinar</button>
+          <div class="input-group" style="margin-top: 15px;">
+            <label style="color: var(--primary);">Nome do técnico</label>
+            <input type="text" id="techName" placeholder="Digite o nome do técnico">
+          </div>
+        </div>
+      </div>
+    </section>
+    <div class="buttons-container">
+      <button id="generateReportBtn" onclick="handleGenerateReport()" class="btn-disabled"><i data-lucide="file-text"></i><b>Gerar Relatório</b></button>
+    </div>
+    <section class="card">
+      <h2><i data-lucide="check-circle-2"></i> Encerramento</h2>
+      <label><input type="checkbox"> Escrever relatório no Milvus</label>
+      <label><input type="checkbox"> Coletar assinatura do responsável</label>
+      <label><input type="checkbox"> Coletar assinatura do técnico</label>
+      <label><input type="checkbox"> Encerrar chamado na frente do responsável</label>
+    </section>
+  </div>
+  
+  <!-- Modal de Relatório -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Relatório de Preventiva</h3>
+      </div>
+      <div class="modal-content" id="modalReportContent"></div>
+      <div class="modal-actions">
+        <button onclick="saveAsTxt()"><i data-lucide="download"></i> Salvar como TXT</button>
+        <button onclick="saveAsPDF()"><i data-lucide="file-text"></i> Salvar como PDF</button>
+        <button onclick="saveAsCustomPDF()"><i data-lucide="file-text"></i> Salvar como PDF Personalizado</button>
+        <button onclick="copyToClipboard()"><i data-lucide="copy"></i> Copiar</button>
+        <button onclick="closeModal()"><i data-lucide="x"></i> Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Campos Pendentes -->
+  <div class="modal-overlay" id="missingFieldsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Campos Obrigatórios Pendentes</h3>
+      </div>
+      <div class="modal-content">
+        <p>Por favor, preencha os seguintes campos obrigatórios antes de gerar o relatório:</p>
+        <ul class="missing-fields-list" id="missingFieldsList"></ul>
+      </div>
+      <div class="modal-actions">
+        <button onclick="closeMissingFieldsModal()"><i data-lucide="check"></i> OK</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Personalização do PDF -->
+  <div class="modal-overlay" id="pdfCustomModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Personalizar PDF</h3>
+      </div>
+      
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab('layout')">
+          <i data-lucide="layout-template"></i>
+          Layout
+        </div>
+        <div class="tab" onclick="switchTab('colors')">
+          <i data-lucide="palette"></i>
+          Cores
+        </div>
+        <div class="tab" onclick="switchTab('text')">
+          <i data-lucide="type"></i>
+          Texto
+        </div>
+        <div class="tab" onclick="switchTab('security')">
+          <i data-lucide="shield"></i>
+          Segurança
+        </div>
+        <div class="tab" onclick="switchTab('preview')">
+          <i data-lucide="eye"></i>
+          Prévia
+        </div>
+      </div>
+      
+      <!-- Aba Layout -->
+      <div class="tab-content active" id="layout-tab">
+        <h4 style="color: var(--primary); margin-bottom: 20px;">
+          <i data-lucide="layout-template"></i>
+          Escolha um Template
+        </h4>
+        
+        <div class="template-selector">
+          <div class="template-card template-modern" onclick="selectTemplate('modern')">
+            <div class="template-preview">
+              <i data-lucide="zap"></i>
+            </div>
+            <div class="template-name">Moderno</div>
+            <div class="template-description">Design contemporâneo com gradientes e elementos visuais dinâmicos</div>
+          </div>
+          
+          <div class="template-card template-corporate selected" onclick="selectTemplate('corporate')">
+            <div class="template-preview">
+              <i data-lucide="briefcase"></i>
+            </div>
+            <div class="template-name">Corporativo</div>
+            <div class="template-description">Layout profissional e formal, ideal para ambientes empresariais</div>
+          </div>
+          
+          <div class="template-card template-minimal" onclick="selectTemplate('minimal')">
+            <div class="template-preview">
+              <i data-lucide="minimize-2"></i>
+            </div>
+            <div class="template-name">Minimalista</div>
+            <div class="template-description">Design limpo e simples, focado no conteúdo essencial</div>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label>Nome da Empresa</label>
+          <input type="text" id="pdfCompanyName" placeholder="Digite o nome da empresa" oninput="updatePreview()">
+        </div>
+        <div class="input-group">
+          <label>Nome do Técnico</label>
+          <input type="text" id="pdfTechnicianName" placeholder="Digite o nome do técnico" oninput="updatePreview()">
+        </div>
+        <div class="input-group">
+          <label>Data do Relatório</label>
+          <input type="date" id="pdfReportDate" oninput="updatePreview()">
+        </div>
+        
+        <!-- Upload de Logo -->
+        <div class="logo-upload-section">
+          <h4 style="color: var(--primary); margin-bottom: 15px;">
+            <i data-lucide="image"></i>
+            Logo da Empresa
+          </h4>
+          <input type="file" id="pdfLogo" accept="image/*" onchange="updateLogo(this)" style="margin-bottom: 15px;">
+          <div id="logoPreviewContainer"></div>
+          
+          <div class="logo-controls">
+            <div class="input-group">
+              <label>Posição do Logo</label>
+              <select id="logoPosition" onchange="updatePreview()">
+                <option value="top-left">Superior Esquerda</option>
+                <option value="top-center" selected>Superior Centro</option>
+                <option value="top-right">Superior Direita</option>
+                <option value="header">No Cabeçalho</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label>Tamanho do Logo (%)</label>
+              <input type="range" id="logoSize" min="50" max="200" value="100" oninput="updatePreview()">
+              <span id="logoSizeValue">100%</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Campos Extras -->
+        <h4 style="color: var(--primary); margin: 25px 0 15px 0;">
+          <i data-lucide="plus-circle"></i>
+          Campos Adicionais
+        </h4>
+        <div class="extra-fields">
+          <div class="input-group">
+            <label>Número do Contrato</label>
+            <input type="text" id="contractNumber" placeholder="Ex: CT-2024-001" oninput="updatePreview()">
+          </div>
+          <div class="input-group">
+            <label>Ordem de Serviço</label>
+            <input type="text" id="serviceOrder" placeholder="Ex: OS-2024-001" oninput="updatePreview()">
+          </div>
+          <div class="input-group">
+            <label>Responsável Técnico</label>
+            <input type="text" id="technicalManager" placeholder="Nome do responsável técnico" oninput="updatePreview()">
+          </div>
+        </div>
+        
+        <!-- Rodapé Customizável -->
+        <h4 style="color: var(--primary); margin: 25px 0 15px 0;">
+          <i data-lucide="align-justify"></i>
+          Rodapé Personalizado
+        </h4>
+        <div class="input-group">
+          <label>Conteúdo do Rodapé</label>
+          <textarea id="customFooter" placeholder="Ex: Endereço, telefone, site, observações..." rows="3" oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+      
+      <!-- Aba Cores -->
+      <div class="tab-content" id="colors-tab">
+        <h4 style="color: var(--primary); margin-bottom: 20px;">
+          <i data-lucide="palette"></i>
+          Personalização de Cores
+        </h4>
+        
+        <div class="color-picker-group">
+          <div class="color-picker-item">
+            <label>Cor Primária</label>
+            <div class="color-input-wrapper">
+              <input type="color" id="primaryColor" value="#ff7a00" onchange="updateColors()">
+              <input type="text" id="primaryColorHex" value="#ff7a00" class="color-hex-input" onchange="updateColorsFromHex()">
+            </div>
+          </div>
+          
+          <div class="color-picker-item">
+            <label>Cor Secundária</label>
+            <div class="color-input-wrapper">
+              <input type="color" id="secondaryColor" value="#2c3e50" onchange="updateColors()">
+              <input type="text" id="secondaryColorHex" value="#2c3e50" class="color-hex-input" onchange="updateColorsFromHex()">
+            </div>
+          </div>
+          
+          <div class="color-picker-item">
+            <label>Cor do Texto</label>
+            <div class="color-input-wrapper">
+              <input type="color" id="textColor" value="#333333" onchange="updateColors()">
+              <input type="text" id="textColorHex" value="#333333" class="color-hex-input" onchange="updateColorsFromHex()">
+            </div>
+          </div>
+          
+          <div class="color-picker-item">
+            <label>Cor de Fundo</label>
+            <div class="color-input-wrapper">
+              <input type="color" id="backgroundColor" value="#ffffff" onchange="updateColors()">
+              <input type="text" id="backgroundColorHex" value="#ffffff" class="color-hex-input" onchange="updateColorsFromHex()">
+            </div>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label>Imagem de Fundo (Opcional)</label>
+          <input type="file" id="pdfBackgroundImage" accept="image/*" onchange="updateBackgroundImage(this)">
+          <div id="bgImagePreviewContainer"></div>
+        </div>
+        
+        <div class="input-group" id="bgImageOpacitySection" style="display: none;">
+          <label>Opacidade da Imagem de Fundo</label>
+          <input type="range" id="bgImageOpacity" min="10" max="100" value="30" oninput="updateBackgroundOpacity()">
+          <span id="bgImageOpacityValue">30%</span>
+        </div>
+      </div>
+      
+      <!-- Aba Texto -->
+      <div class="tab-content" id="text-tab">
+        <h4 style="color: var(--primary); margin-bottom: 20px;">
+          <i data-lucide="type"></i>
+          Personalização de Texto
+        </h4>
+        
+        <div class="text-customization">
+          <div class="font-selector">
+            <label>Família da Fonte</label>
+            <select id="fontFamily" onchange="updateTextPreview()">
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Helvetica, sans-serif">Helvetica</option>
+              <option value="'Times New Roman', serif">Times New Roman</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="'Courier New', monospace">Courier New</option>
+              <option value="Verdana, sans-serif">Verdana</option>
+              <option value="Tahoma, sans-serif">Tahoma</option>
+              <option value="'Segoe UI', sans-serif">Segoe UI</option>
+              <option value="'Roboto', sans-serif">Roboto</option>
+              <option value="'Open Sans', sans-serif">Open Sans</option>
+            </select>
+            
+            <div class="font-preview" id="fontPreview">
+              <div style="font-size: 18px; margin-bottom: 5px;">Título do Documento</div>
+              <div style="font-size: 14px; margin-bottom: 5px;">Subtítulo da seção</div>
+              <div style="font-size: 12px;">Texto do corpo do documento com informações detalhadas.</div>
+            </div>
+          </div>
+          
+          <div class="font-size-controls">
+            <div class="input-group">
+              <label>Título Principal</label>
+              <div class="font-size-input">
+                <input type="range" id="titleFontSize" min="16" max="48" value="24" onchange="updateTextPreview()">
+                <span id="titleFontSizeValue">24pt</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Subtítulo</label>
+              <div class="font-size-input">
+                <input type="range" id="subtitleFontSize" min="12" max="32" value="16" onchange="updateTextPreview()">
+                <span id="subtitleFontSizeValue">16pt</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Texto do Corpo</label>
+              <div class="font-size-input">
+                <input type="range" id="bodyFontSize" min="8" max="24" value="11" onchange="updateTextPreview()">
+                <span id="bodyFontSizeValue">11pt</span>
+              </div>
+            </div>
+            <div class="input-group">
+              <label>Rodapé</label>
+              <div class="font-size-input">
+                <input type="range" id="footerFontSize" min="6" max="16" value="9" onchange="updateTextPreview()">
+                <span id="footerFontSizeValue">9pt</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="font-style-controls">
+          <button class="style-toggle" id="boldToggle" onclick="toggleStyle('bold')">
+            <i data-lucide="bold"></i> Negrito
+          </button>
+          <button class="style-toggle" id="italicToggle" onclick="toggleStyle('italic')">
+            <i data-lucide="italic"></i> Itálico
+          </button>
+          <button class="style-toggle" id="underlineToggle" onclick="toggleStyle('underline')">
+            <i data-lucide="underline"></i> Sublinhado
+          </button>
+        </div>
+        
+        <div class="alignment-controls">
+          <label style="width: 100%; margin-bottom: 10px; text-align: center; color: var(--primary); font-weight: 500;">Alinhamento do Texto:</label>
+          <button class="alignment-btn active" id="alignLeft" onclick="setAlignment('left')" title="Alinhar à esquerda">
+            <i data-lucide="align-left"></i>
+          </button>
+          <button class="alignment-btn" id="alignCenter" onclick="setAlignment('center')" title="Centralizar">
+            <i data-lucide="align-center"></i>
+          </button>
+          <button class="alignment-btn" id="alignRight" onclick="setAlignment('right')" title="Alinhar à direita">
+            <i data-lucide="align-right"></i>
+          </button>
+          <button class="alignment-btn" id="alignJustify" onclick="setAlignment('justify')" title="Justificar">
+            <i data-lucide="align-justify"></i>
+          </button>
+        </div>
+        
+        <!-- Controles Avançados de Espaçamento -->
+        <div class="advanced-text-controls">
+          <div class="advanced-text-title">
+            <i data-lucide="spacing"></i>
+            Controles Avançados de Espaçamento
+          </div>
+          
+          <div class="text-spacing-controls">
+            <div class="spacing-control">
+              <label>Espaçamento entre Linhas</label>
+              <div class="spacing-slider">
+                <input type="range" id="lineHeight" min="1" max="3" step="0.1" value="1.4" onchange="updateTextPreview()">
+                <span class="spacing-value" id="lineHeightValue">1.4</span>
+              </div>
+            </div>
+            
+            <div class="spacing-control">
+              <label>Espaçamento entre Parágrafos</label>
+              <div class="spacing-slider">
+                <input type="range" id="paragraphSpacing" min="2" max="15" value="5" onchange="updateTextPreview()">
+                <span class="spacing-value" id="paragraphSpacingValue">5mm</span>
+              </div>
+            </div>
+            
+            <div class="spacing-control">
+              <label>Margem das Seções</label>
+              <div class="spacing-slider">
+                <input type="range" id="sectionMargin" min="5" max="25" value="10" onchange="updateTextPreview()">
+                <span class="spacing-value" id="sectionMarginValue">10mm</span>
+              </div>
+            </div>
+            
+            <div class="spacing-control">
+              <label>Espaçamento de Títulos</label>
+              <div class="spacing-slider">
+                <input type="range" id="titleSpacing" min="3" max="20" value="8" onchange="updateTextPreview()">
+                <span class="spacing-value" id="titleSpacingValue">8mm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Controles de Cores do Texto -->
+        <div class="advanced-text-controls">
+          <div class="advanced-text-title">
+            <i data-lucide="palette"></i>
+            Cores Personalizadas por Elemento
+          </div>
+          
+          <div class="text-color-controls">
+            <div class="text-color-item">
+              <label>Cor do Título</label>
+              <div class="color-input-group">
+                <input type="color" id="titleTextColor" value="#ff7a00" onchange="updateTextColors()">
+                <input type="text" id="titleTextColorHex" value="#FF7A00" onchange="updateTextColorsFromHex()" maxlength="7">
+              </div>
+            </div>
+            
+            <div class="text-color-item">
+              <label>Cor do Subtítulo</label>
+              <div class="color-input-group">
+                <input type="color" id="subtitleTextColor" value="#2c3e50" onchange="updateTextColors()">
+                <input type="text" id="subtitleTextColorHex" value="#2C3E50" onchange="updateTextColorsFromHex()" maxlength="7">
+              </div>
+            </div>
+            
+            <div class="text-color-item">
+              <label>Cor do Corpo</label>
+              <div class="color-input-group">
+                <input type="color" id="bodyTextColor" value="#333333" onchange="updateTextColors()">
+                <input type="text" id="bodyTextColorHex" value="#333333" onchange="updateTextColorsFromHex()" maxlength="7">
+              </div>
+            </div>
+            
+            <div class="text-color-item">
+              <label>Cor do Rodapé</label>
+              <div class="color-input-group">
+                <input type="color" id="footerTextColor" value="#666666" onchange="updateTextColors()">
+                <input type="text" id="footerTextColorHex" value="#666666" onchange="updateTextColorsFromHex()" maxlength="7">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Prévia de Texto em Tempo Real -->
+        <div class="text-preview-section">
+          <div class="text-preview-title">
+            <i data-lucide="eye"></i>
+            Prévia das Configurações de Texto
+          </div>
+          
+          <div class="text-preview-content" id="textPreviewContent">
+            <div class="preview-title" id="previewTitle">RELATÓRIO DE MANUTENÇÃO PREVENTIVA</div>
+            <div class="preview-subtitle" id="previewSubtitle">Empresa: Nome da Empresa - Data: 20/08/2025</div>
+            <div class="preview-body" id="previewBody">
+              Este é um exemplo de como o texto do corpo aparecerá no documento final. 
+              Você pode ver como as configurações de fonte, tamanho, cor e espaçamento 
+              afetam a aparência do texto.
+            </div>
+            <div class="preview-body" id="previewBody2">
+              Este é um segundo parágrafo para demonstrar o espaçamento entre parágrafos 
+              e como o alinhamento escolhido afeta a apresentação do conteúdo.
+            </div>
+            <div class="preview-footer" id="previewFooter">
+              Rodapé: Informações de contato e observações adicionais
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Aba Segurança -->
+      <div class="tab-content" id="security-tab">
+        <div class="security-section">
+          <div class="security-title">
+            <i data-lucide="shield"></i>
+            Recursos de Segurança
+          </div>
+          
+          <div class="input-group">
+            <label>
+              <input type="checkbox" id="enablePassword"> 
+              Proteger PDF com senha
+            </label>
+          </div>
+          
+          <div class="input-group" id="passwordSection" style="display: none;">
+            <label>Senha do PDF</label>
+            <input type="password" id="pdfPassword" placeholder="Digite a senha para o PDF">
+          </div>
+          
+          <div class="input-group">
+            <label>
+              <input type="checkbox" id="enableWatermark"> 
+              Adicionar marca d'água
+            </label>
+          </div>
+          
+          <div class="watermark-controls" id="watermarkSection" style="display: none;">
+            <div class="input-group">
+              <label>Texto da Marca D'água</label>
+              <input type="text" id="watermarkText" placeholder="Ex: CONFIDENCIAL" oninput="updatePreview()">
+            </div>
+            
+            <div class="input-group">
+              <label>Transparência (%)</label>
+              <input type="range" id="watermarkOpacity" min="10" max="80" value="30" oninput="updatePreview()">
+              <span id="watermarkOpacityValue">30%</span>
+            </div>
+            
+            <div class="input-group">
+              <label>Posição da Marca D'água</label>
+              <select id="watermarkPosition" onchange="updatePreview()">
+                <option value="center">Centro</option>
+                <option value="diagonal">Diagonal</option>
+                <option value="top-right">Superior Direita</option>
+                <option value="bottom-left">Inferior Esquerda</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="input-group">
+            <label>
+              <input type="checkbox" id="enableQRCode"> 
+              Adicionar QR Code para verificação
+            </label>
+          </div>
+          
+          <div class="input-group" id="qrCodeSection" style="display: none;">
+            <label>URL ou Texto para QR Code</label>
+            <input type="text" id="qrCodeData" placeholder="Ex: https://empresa.com/verificar" oninput="updatePreview()">
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label>Observações Adicionais</label>
+          <textarea id="additionalNotes" placeholder="Observações que aparecerão no final do relatório..." rows="4" oninput="updatePreview()"></textarea>
+        </div>
+      </div>
+      
+      <!-- Aba Prévia -->
+      <div class="tab-content" id="preview-tab">
+        <div class="pdf-preview">
+          <div class="pdf-preview-title">Prévia do PDF Personalizado</div>
+          <div class="pdf-preview-container" id="pdfPreviewContainer">
+            <div class="pdf-page-preview" id="pdfPagePreview">
+              <!-- Conteúdo da prévia será gerado dinamicamente -->
+              <div class="pdf-preview-content" id="pdfPreviewContent">
+                <div class="pdf-header">
+                  <div class="pdf-logo-container" id="previewLogoContainer"></div>
+                  <h1 class="pdf-title" id="previewTitle">Relatório de Preventiva</h1>
+                  <div class="pdf-company-info" id="previewCompanyInfo"></div>
+                </div>
+                <div class="pdf-body" id="previewBody">
+                  <div class="pdf-content-section">
+                    <h2>Checklist Preventiva</h2>
+                    <p>Este é um exemplo da prévia do seu PDF personalizado com todas as configurações aplicadas.</p>
+                  </div>
+                </div>
+                <div class="pdf-footer" id="previewFooter"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Controles de navegação de páginas -->
+          <div class="pdf-navigation">
+            <button id="prevPageBtn" onclick="previousPage()" disabled>
+              <i data-lucide="chevron-left"></i>
+            </button>
+            <span id="pageInfo">Página 1 de 1</span>
+            <button id="nextPageBtn" onclick="nextPage()" disabled>
+              <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Configurações Salvas -->
+        <div class="saved-configs">
+          <div class="saved-configs-title">
+            <i data-lucide="save"></i>
+            Configurações Salvas
+          </div>
+          
+          <div class="input-group">
+            <label>Nome da Configuração</label>
+            <input type="text" id="configName" placeholder="Ex: Cliente ABC - Padrão">
+          </div>
+          
+          <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <button onclick="saveConfiguration()" style="width: auto;">
+              <i data-lucide="save"></i> Salvar Configuração
+            </button>
+            <button onclick="loadConfiguration()" style="width: auto;">
+              <i data-lucide="folder-open"></i> Carregar Configuração
+            </button>
+          </div>
+          
+          <div id="savedConfigsList">
+            <!-- Lista de configurações salvas será gerada dinamicamente -->
+          </div>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button id="generatePdfBtn" onclick="generateCustomPDF()">
+          <i data-lucide="file-text"></i> Gerar PDF Personalizado
+        </button>
+        <button onclick="closePdfCustomModal()">
+          <i data-lucide="x"></i> Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Assinatura -->
+  <div class="modal-overlay" id="signatureModal" style="z-index: 3000;">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="signatureModalTitle">Assinar</h3>
+      </div>
+      <div class="modal-content">
+        <canvas id="signatureCanvas"></canvas>
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+          <button onclick="clearSignatureCanvas()" style="width: 120px; background-color: var(--error-color);"><i data-lucide="trash-2"></i> Limpar</button>
+          <button onclick="saveSignature()" style="width: 120px;"><i data-lucide="check"></i> Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    lucide.createIcons();
+    let machineCounter = 0;
+    let infraCounter = 0;
+    let backgroundImageData = null;
+    let logoImageData = null;
+    let selectedTemplate = 'corporate';
+    let savedConfigurations = JSON.parse(localStorage.getItem('pdfConfigurations') || '[]');
+    
+    // Variáveis para controle de assinatura
+    let isDrawing = false;
+    let currentSignatureType = null;
+    let lastX = 0;
+    let lastY = 0;
+    let signatureCanvas, signatureCtx;
+    
+    // Definir data atual como padrão
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date();
+      const formattedDate = today.toISOString().split('T')[0];
+      document.getElementById('pdfReportDate').value = formattedDate;
+      
+      // Carregar configurações salvas
+      loadSavedConfigurationsList();
+      
+      // Configurar eventos para campos de senha e marca d'água
+      document.getElementById('enablePassword').addEventListener('change', function() {
+        document.getElementById('passwordSection').style.display = this.checked ? 'block' : 'none';
+      });
+      
+      document.getElementById('enableWatermark').addEventListener('change', function() {
+        document.getElementById('watermarkSection').style.display = this.checked ? 'block' : 'none';
+      });
+      
+      document.getElementById('enableQRCode').addEventListener('change', function() {
+        document.getElementById('qrCodeSection').style.display = this.checked ? 'block' : 'none';
+      });
+      
+      // Atualizar valores dos sliders
+      document.getElementById('logoSize').addEventListener('input', function() {
+        document.getElementById('logoSizeValue').textContent = this.value + '%';
+      });
+      
+      document.getElementById('bgImageOpacity').addEventListener('input', function() {
+        document.getElementById('bgImageOpacityValue').textContent = this.value + '%';
+        updatePreview();
+      });
+      
+      document.getElementById('lineHeight').addEventListener('input', function() {
+        document.getElementById('lineHeightValue').textContent = this.value;
+        updateTextPreview();
+      });
+      
+      document.getElementById('paragraphSpacing').addEventListener('input', function() {
+        document.getElementById('paragraphSpacingValue').textContent = this.value + 'mm';
+        updateTextPreview();
+      });
+      
+      document.getElementById('sectionMargin').addEventListener('input', function() {
+        document.getElementById('sectionMarginValue').textContent = this.value + 'mm';
+        updateTextPreview();
+      });
+      
+      document.getElementById('titleSpacing').addEventListener('input', function() {
+        document.getElementById('titleSpacingValue').textContent = this.value + 'mm';
+        updateTextPreview();
+      });
+      
+      document.getElementById('watermarkOpacity').addEventListener('input', function() {
+        document.getElementById('watermarkOpacityValue').textContent = this.value + '%';
+      });
+      
+      // Atualizar valores dos sliders de tamanho de fonte
+      document.getElementById('titleFontSize').addEventListener('input', function() {
+        document.getElementById('titleFontSizeValue').textContent = this.value + 'pt';
+        updateTextPreview();
+      });
+      
+      document.getElementById('subtitleFontSize').addEventListener('input', function() {
+        document.getElementById('subtitleFontSizeValue').textContent = this.value + 'pt';
+        updateTextPreview();
+      });
+      
+      document.getElementById('bodyFontSize').addEventListener('input', function() {
+        document.getElementById('bodyFontSizeValue').textContent = this.value + 'pt';
+        updateTextPreview();
+      });
+      
+      document.getElementById('footerFontSize').addEventListener('input', function() {
+        document.getElementById('footerFontSizeValue').textContent = this.value + 'pt';
+        updateTextPreview();
+      });
+      
+      // Adicionar eventos para atualizar a prévia em tempo real
+      const updatePreviewInputs = [
+        'pdfCompanyName', 'pdfTechnicianName', 'pdfReportDate',
+        'primaryColor', 'secondaryColor', 'textColor', 'backgroundColor',
+        'fontFamily', 'titleFontSize', 'subtitleFontSize', 'bodyFontSize', 'footerFontSize',
+        'boldToggle', 'italicToggle', 'underlineToggle',
+        'lineHeight', 'paragraphSpacing', 'sectionMargin', 'titleSpacing',
+        'titleTextColor', 'subtitleTextColor', 'bodyTextColor', 'footerTextColor',
+        'contractNumber', 'serviceOrder', 'technicalManager', 'customFooter',
+        'enableWatermark', 'watermarkText', 'watermarkOpacity', 'watermarkPosition',
+        'additionalNotes'
+      ];
+      
+      updatePreviewInputs.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.addEventListener('input', updatePreview);
+          element.addEventListener('change', updatePreview);
+        }
+      });
+      
+      // Adicionar eventos para os botões de alinhamento
+      document.querySelectorAll('.alignment-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          setTimeout(updatePreview, 10);
+        });
+      });
+      
+      // Adicionar eventos para os botões de estilo
+      document.querySelectorAll('.style-toggle').forEach(btn => {
+        btn.addEventListener('click', function() {
+          setTimeout(updatePreview, 10);
+        });
+      });
+      
+      // Adicionar eventos para os botões de template
+      document.querySelectorAll('.template-card').forEach(card => {
+        card.addEventListener('click', function() {
+          setTimeout(updatePreview, 10);
+        });
+      });
+      
+      // Adicionar evento para o seletor de posição do logo
+      document.getElementById('logoPosition').addEventListener('change', updatePreview);
+      
+      // Adicionar evento para o controle de tamanho do logo
+      document.getElementById('logoSize').addEventListener('input', function() {
+        document.getElementById('logoSizeValue').textContent = this.value + '%';
+        updatePreview();
+      });
+      
+      // Adicionar evento para o controle de opacidade da marca d'água
+      document.getElementById('watermarkOpacity').addEventListener('input', function() {
+        document.getElementById('watermarkOpacityValue').textContent = this.value + '%';
+        updatePreview();
+      });
+      
+      // Inicializar prévia de texto
+      updateTextPreview();
+      
+      // Inicializar a prévia
+      updatePreview();
+    });
+    
+    function toggleDropdown() {
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      dropdownMenu.classList.toggle('show');
+    }
+    
+    // Fechar a lista suspensa ao clicar fora dela
+    document.addEventListener('click', function(event) {
+      const dropdownContainer = document.querySelector('.dropdown-container');
+      const dropdownMenu = document.getElementById('dropdownMenu');
+      
+      if (!dropdownContainer.contains(event.target)) {
+        dropdownMenu.classList.remove('show');
+      }
+    });
+    
+    function toggleTheme() {
+      const body = document.body;
+      body.classList.toggle('dark');
+      
+      // Salvar preferência no localStorage
+      localStorage.setItem('darkMode', body.classList.contains('dark'));
+    }
+    
+    // Carregar tema salvo
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.body.classList.add('dark');
+    }
+    
+    // Função para alternar entre abas
+    function switchTab(tabName) {
+      // Remover classe active de todas as abas e conteúdos
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      // Adicionar classe active na aba e conteúdo selecionados
+      event.target.classList.add('active');
+      document.getElementById(tabName + '-tab').classList.add('active');
+      
+      // Atualizar ícones
+      lucide.createIcons();
+    }
+    
+    // Função para selecionar template
+    function selectTemplate(templateName) {
+      selectedTemplate = templateName;
+      
+      // Remover seleção de todos os templates
+      document.querySelectorAll('.template-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      // Adicionar seleção ao template escolhido
+      document.querySelector('.template-' + templateName).classList.add('selected');
+      
+      // Aplicar cores padrão do template
+      applyTemplateColors(templateName);
+      
+      updatePreview();
+    }
+    
+    // Função para aplicar cores padrão dos templates
+    function applyTemplateColors(templateName) {
+      const colorMappings = {
+        modern: {
+          primary: '#667eea',
+          secondary: '#764ba2',
+          text: '#2d3748',
+          background: '#ffffff'
+        },
+        corporate: {
+          primary: '#2c3e50',
+          secondary: '#34495e',
+          text: '#2c3e50',
+          background: '#ffffff'
+        },
+        minimal: {
+          primary: '#495057',
+          secondary: '#6c757d',
+          text: '#212529',
+          background: '#ffffff'
+        }
+      };
+      
+      const colors = colorMappings[templateName];
+      if (colors) {
+        document.getElementById('primaryColor').value = colors.primary;
+        document.getElementById('primaryColorHex').value = colors.primary;
+        document.getElementById('secondaryColor').value = colors.secondary;
+        document.getElementById('secondaryColorHex').value = colors.secondary;
+        document.getElementById('textColor').value = colors.text;
+        document.getElementById('textColorHex').value = colors.text;
+        document.getElementById('backgroundColor').value = colors.background;
+        document.getElementById('backgroundColorHex').value = colors.background;
+        
+        updateColors();
+      }
+    }
+    
+    // Função para atualizar cores do texto
+    function updateTextColors() {
+      const titleColor = document.getElementById('titleTextColor').value;
+      const subtitleColor = document.getElementById('subtitleTextColor').value;
+      const bodyColor = document.getElementById('bodyTextColor').value;
+      const footerColor = document.getElementById('footerTextColor').value;
+      
+      // Atualizar campos hex
+      document.getElementById('titleTextColorHex').value = titleColor.toUpperCase();
+      document.getElementById('subtitleTextColorHex').value = subtitleColor.toUpperCase();
+      document.getElementById('bodyTextColorHex').value = bodyColor.toUpperCase();
+      document.getElementById('footerTextColorHex').value = footerColor.toUpperCase();
+      
+      updateTextPreview();
+    }
+    
+    // Função para atualizar cores a partir dos campos hex
+    function updateTextColorsFromHex() {
+      const titleHex = document.getElementById('titleTextColorHex').value;
+      const subtitleHex = document.getElementById('subtitleTextColorHex').value;
+      const bodyHex = document.getElementById('bodyTextColorHex').value;
+      const footerHex = document.getElementById('footerTextColorHex').value;
+      
+      // Validar formato hex
+      const hexRegex = /^#[0-9A-F]{6}$/i;
+      
+      if (hexRegex.test(titleHex)) {
+        document.getElementById('titleTextColor').value = titleHex;
+      }
+      if (hexRegex.test(subtitleHex)) {
+        document.getElementById('subtitleTextColor').value = subtitleHex;
+      }
+      if (hexRegex.test(bodyHex)) {
+        document.getElementById('bodyTextColor').value = bodyHex;
+      }
+      if (hexRegex.test(footerHex)) {
+        document.getElementById('footerTextColor').value = footerHex;
+      }
+      
+      updateTextPreview();
+    }
+    
+    // Função para atualizar prévia de texto em tempo real
+    function updateTextPreview() {
+      // Obter valores dos controles
+      const fontFamily = document.getElementById('fontFamily').value;
+      const titleFontSize = document.getElementById('titleFontSize').value;
+      const subtitleFontSize = document.getElementById('subtitleFontSize').value;
+      const bodyFontSize = document.getElementById('bodyFontSize').value;
+      const footerFontSize = document.getElementById('footerFontSize').value;
+      
+      const titleColor = document.getElementById('titleTextColor').value;
+      const subtitleColor = document.getElementById('subtitleTextColor').value;
+      const bodyColor = document.getElementById('bodyTextColor').value;
+      const footerColor = document.getElementById('footerTextColor').value;
+      
+      const lineHeight = document.getElementById('lineHeight').value;
+      const paragraphSpacing = document.getElementById('paragraphSpacing').value;
+      const sectionMargin = document.getElementById('sectionMargin').value;
+      const titleSpacing = document.getElementById('titleSpacing').value;
+      
+      // Estilos
+      const isBold = document.getElementById('boldToggle').classList.contains('active');
+      const isItalic = document.getElementById('italicToggle').classList.contains('active');
+      const isUnderline = document.getElementById('underlineToggle').classList.contains('active');
+      const alignment = getSelectedAlignment();
+      
+      // Aplicar estilos na prévia de fonte
+      const fontPreview = document.getElementById('fontPreview');
+      fontPreview.style.fontFamily = fontFamily;
+      
+      // Aplicar estilos na prévia de texto
+      const textPreviewContent = document.getElementById('textPreviewContent');
+      textPreviewContent.style.fontFamily = fontFamily;
+      textPreviewContent.style.lineHeight = lineHeight;
+      textPreviewContent.style.textAlign = alignment;
+      
+      // Título
+      const previewTitle = document.getElementById('previewTitle');
+      previewTitle.style.fontSize = titleFontSize + 'pt';
+      previewTitle.style.color = titleColor;
+      previewTitle.style.fontWeight = isBold ? 'bold' : 'normal';
+      previewTitle.style.fontStyle = isItalic ? 'italic' : 'normal';
+      previewTitle.style.textDecoration = isUnderline ? 'underline' : 'none';
+      previewTitle.style.marginBottom = titleSpacing + 'mm';
+      
+      // Subtítulo
+      const previewSubtitle = document.getElementById('previewSubtitle');
+      previewSubtitle.style.fontSize = subtitleFontSize + 'pt';
+      previewSubtitle.style.color = subtitleColor;
+      previewSubtitle.style.marginBottom = (titleSpacing / 2) + 'mm';
+      
+      // Corpo do texto
+      const previewBodies = document.querySelectorAll('.preview-body');
+      previewBodies.forEach(body => {
+        body.style.fontSize = bodyFontSize + 'pt';
+        body.style.color = bodyColor;
+        body.style.marginBottom = paragraphSpacing + 'mm';
+      });
+      
+      // Rodapé
+      const previewFooter = document.getElementById('previewFooter');
+      previewFooter.style.fontSize = footerFontSize + 'pt';
+      previewFooter.style.color = footerColor;
+      previewFooter.style.marginTop = sectionMargin + 'mm';
+      
+      // Atualizar também a prévia principal do PDF
+      updatePreview();
+    }
+    
+    // Função para atualizar cores
+    function updateColors() {
+      const backgroundColor = document.getElementById('backgroundColor').value;
+      
+      // Atualizar campos hex
+      document.getElementById('primaryColorHex').value = document.getElementById('primaryColor').value;
+      document.getElementById('secondaryColorHex').value = document.getElementById('secondaryColor').value;
+      document.getElementById('textColorHex').value = document.getElementById('textColor').value;
+      document.getElementById('backgroundColorHex').value = backgroundColor;
+      
+      updatePreview();
+    }
+    
+    // Função para atualizar cores a partir dos campos hex
+    function updateColorsFromHex() {
+      const primaryHex = document.getElementById('primaryColorHex').value;
+      const secondaryHex = document.getElementById('secondaryColorHex').value;
+      const textHex = document.getElementById('textColorHex').value;
+      const backgroundHex = document.getElementById('backgroundColorHex').value;
+      
+      // Validar formato hex
+      const hexRegex = /^#[0-9A-F]{6}$/i;
+      
+      if (hexRegex.test(primaryHex)) {
+        document.getElementById('primaryColor').value = primaryHex;
+      }
+      if (hexRegex.test(secondaryHex)) {
+        document.getElementById('secondaryColor').value = secondaryHex;
+      }
+      if (hexRegex.test(textHex)) {
+        document.getElementById('textColor').value = textHex;
+      }
+      if (hexRegex.test(backgroundHex)) {
+        document.getElementById('backgroundColor').value = backgroundHex;
+      }
+      
+      updatePreview();
+    }
+    
+    // Função para atualizar logo
+    function updateLogo(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          logoImageData = e.target.result;
+          
+          // Mostrar prévia do logo
+          const previewContainer = document.getElementById('logoPreviewContainer');
+          previewContainer.innerHTML = `<img src="${logoImageData}" class="logo-preview" alt="Logo Preview">`;
+          
+          updatePreview();
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    
+    // Função para atualizar imagem de fundo
+    function updateBackgroundImage(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          backgroundImageData = e.target.result;
+          
+          // Mostrar prévia da imagem de fundo
+          const previewContainer = document.getElementById('bgImagePreviewContainer');
+          previewContainer.innerHTML = `<img src="${backgroundImageData}" style="max-width: 200px; max-height: 100px; margin-top: 10px; border-radius: 5px; border: 1px solid #ddd;" alt="Background Preview">`;
+          
+          // Mostrar controle de opacidade
+          document.getElementById('bgImageOpacitySection').style.display = 'block';
+          
+          updatePreview();
+        };
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        backgroundImageData = null;
+        document.getElementById('bgImagePreviewContainer').innerHTML = '';
+        document.getElementById('bgImageOpacitySection').style.display = 'none';
+        updatePreview();
+      }
+    }
+    
+    // Função para atualizar opacidade da imagem de fundo
+    function updateBackgroundOpacity() {
+      const opacity = document.getElementById('bgImageOpacity').value;
+      document.getElementById('bgImageOpacityValue').textContent = opacity + '%';
+      updatePreview();
+    }
+    
+    // Função para alternar estilos de texto
+    function toggleStyle(styleName) {
+      const button = document.getElementById(styleName + 'Toggle');
+      button.classList.toggle('active');
+      updatePreview();
+    }
+    
+    // Função para definir alinhamento
+    function setAlignment(alignment) {
+      // Remover classe active de todos os botões de alinhamento
+      document.querySelectorAll('.alignment-btn').forEach(btn => btn.classList.remove('active'));
+      
+      // Adicionar classe active ao botão selecionado
+      document.getElementById('align' + alignment.charAt(0).toUpperCase() + alignment.slice(1)).classList.add('active');
+      
+      updatePreview();
+    }
+    
+    // Função para salvar configuração
+    function saveConfiguration() {
+      const configName = document.getElementById('configName').value.trim();
+      if (!configName) {
+        alert('Por favor, digite um nome para a configuração.');
+        return;
+      }
+      
+      const config = {
+        name: configName,
+        template: selectedTemplate,
+        companyName: document.getElementById('pdfCompanyName').value,
+        technicianName: document.getElementById('pdfTechnicianName').value,
+        reportDate: document.getElementById('pdfReportDate').value,
+        colors: {
+          primary: document.getElementById('primaryColor').value,
+          secondary: document.getElementById('secondaryColor').value,
+          text: document.getElementById('textColor').value,
+          background: document.getElementById('backgroundColor').value
+        },
+        fonts: {
+          family: document.getElementById('fontFamily').value,
+          titleSize: document.getElementById('titleFontSize').value,
+          subtitleSize: document.getElementById('subtitleFontSize').value,
+          bodySize: document.getElementById('bodyFontSize').value,
+          footerSize: document.getElementById('footerFontSize').value
+        },
+        styles: {
+          bold: document.getElementById('boldToggle').classList.contains('active'),
+          italic: document.getElementById('italicToggle').classList.contains('active'),
+          underline: document.getElementById('underlineToggle').classList.contains('active'),
+          lineHeight: document.getElementById('lineHeight').value,
+          paragraphSpacing: document.getElementById('paragraphSpacing').value,
+          alignment: getSelectedAlignment()
+        },
+        logo: {
+          data: logoImageData,
+          position: document.getElementById('logoPosition').value,
+          size: document.getElementById('logoSize').value
+        },
+        extras: {
+          contractNumber: document.getElementById('contractNumber').value,
+          serviceOrder: document.getElementById('serviceOrder').value,
+          technicalManager: document.getElementById('technicalManager').value,
+          customFooter: document.getElementById('customFooter').value
+        },
+        security: {
+          enablePassword: document.getElementById('enablePassword').checked,
+          password: document.getElementById('pdfPassword').value,
+          enableWatermark: document.getElementById('enableWatermark').checked,
+          watermarkText: document.getElementById('watermarkText').value,
+          watermarkOpacity: document.getElementById('watermarkOpacity').value,
+          watermarkPosition: document.getElementById('watermarkPosition').value,
+          enableQRCode: document.getElementById('enableQRCode').checked,
+          qrCodeData: document.getElementById('qrCodeData').value
+        },
+        additionalNotes: document.getElementById('additionalNotes').value,
+        backgroundImage: backgroundImageData,
+        createdAt: new Date().toISOString()
+      };
+      
+      // Verificar se já existe uma configuração com o mesmo nome
+      const existingIndex = savedConfigurations.findIndex(c => c.name === configName);
+      if (existingIndex !== -1) {
+        if (confirm('Já existe uma configuração com este nome. Deseja substituir?')) {
+          savedConfigurations[existingIndex] = config;
+        } else {
+          return;
+        }
+      } else {
+        savedConfigurations.push(config);
+      }
+      
+      // Salvar no localStorage
+      localStorage.setItem('pdfConfigurations', JSON.stringify(savedConfigurations));
+      
+      // Atualizar lista
+      loadSavedConfigurationsList();
+      
+      // Limpar campo de nome
+      document.getElementById('configName').value = '';
+      
+      alert('Configuração salva com sucesso!');
+    }
+    
+    // Função para obter alinhamento selecionado
+    function getSelectedAlignment() {
+      const alignments = ['left', 'center', 'right', 'justify'];
+      for (const alignment of alignments) {
+        if (document.getElementById('align' + alignment.charAt(0).toUpperCase() + alignment.slice(1)).classList.contains('active')) {
+          return alignment;
+        }
+      }
+      return 'left';
+    }
+    
+    // Função para carregar lista de configurações salvas
+    function loadSavedConfigurationsList() {
+      const listContainer = document.getElementById('savedConfigsList');
+      listContainer.innerHTML = '';
+      
+      if (savedConfigurations.length === 0) {
+        listContainer.innerHTML = '<p style="text-align: center; color: #6c757d;">Nenhuma configuração salva</p>';
+        return;
+      }
+      
+      savedConfigurations.forEach((config, index) => {
+        const configItem = document.createElement('div');
+        configItem.className = 'config-item';
+        configItem.innerHTML = `
+          <div>
+            <strong>${config.name}</strong>
+            <small style="display: block; color: #6c757d;">
+              ${new Date(config.createdAt).toLocaleDateString('pt-BR')} - Template: ${config.template}
+            </small>
+          </div>
+          <div class="config-actions">
+            <button class="config-btn" onclick="loadConfigurationByIndex(${index})" style="background-color: #28a745;">
+              <i data-lucide="folder-open"></i> Carregar
+            </button>
+            <button class="config-btn" onclick="deleteConfiguration(${index})" style="background-color: #dc3545;">
+              <i data-lucide="trash-2"></i> Excluir
+            </button>
+          </div>
+        `;
+        listContainer.appendChild(configItem);
+      });
+      
+      // Atualizar ícones
+      lucide.createIcons();
+    }
+    
+    // Função para carregar configuração por índice
+    function loadConfigurationByIndex(index) {
+      const config = savedConfigurations[index];
+      if (!config) return;
+      
+      // Aplicar configurações
+      selectedTemplate = config.template;
+      selectTemplate(config.template);
+      
+      document.getElementById('pdfCompanyName').value = config.companyName || '';
+      document.getElementById('pdfTechnicianName').value = config.technicianName || '';
+      document.getElementById('pdfReportDate').value = config.reportDate || '';
+      
+      // Cores
+      document.getElementById('primaryColor').value = config.colors.primary;
+      document.getElementById('primaryColorHex').value = config.colors.primary;
+      document.getElementById('secondaryColor').value = config.colors.secondary;
+      document.getElementById('secondaryColorHex').value = config.colors.secondary;
+      document.getElementById('textColor').value = config.colors.text;
+      document.getElementById('textColorHex').value = config.colors.text;
+      document.getElementById('backgroundColor').value = config.colors.background;
+      document.getElementById('backgroundColorHex').value = config.colors.background;
+      
+      // Fontes
+      document.getElementById('fontFamily').value = config.fonts.family;
+      document.getElementById('titleFontSize').value = config.fonts.titleSize;
+      document.getElementById('subtitleFontSize').value = config.fonts.subtitleSize;
+      document.getElementById('bodyFontSize').value = config.fonts.bodySize;
+      document.getElementById('footerFontSize').value = config.fonts.footerSize;
+      
+      // Estilos
+      document.getElementById('boldToggle').classList.toggle('active', config.styles.bold);
+      document.getElementById('italicToggle').classList.toggle('active', config.styles.italic);
+      document.getElementById('underlineToggle').classList.toggle('active', config.styles.underline);
+      document.getElementById('lineHeight').value = config.styles.lineHeight;
+      document.getElementById('lineHeightValue').textContent = config.styles.lineHeight;
+      document.getElementById('paragraphSpacing').value = config.styles.paragraphSpacing;
+      document.getElementById('paragraphSpacingValue').textContent = config.styles.paragraphSpacing + 'mm';
+      
+      // Alinhamento
+      setAlignment(config.styles.alignment);
+      
+      // Logo
+      if (config.logo.data) {
+        logoImageData = config.logo.data;
+        document.getElementById('logoPreviewContainer').innerHTML = `<img src="${logoImageData}" class="logo-preview" alt="Logo Preview">`;
+      }
+      document.getElementById('logoPosition').value = config.logo.position;
+      document.getElementById('logoSize').value = config.logo.size;
+      document.getElementById('logoSizeValue').textContent = config.logo.size + '%';
+      
+      // Campos extras
+      document.getElementById('contractNumber').value = config.extras.contractNumber || '';
+      document.getElementById('serviceOrder').value = config.extras.serviceOrder || '';
+      document.getElementById('technicalManager').value = config.extras.technicalManager || '';
+      document.getElementById('customFooter').value = config.extras.customFooter || '';
+      
+      // Segurança
+      document.getElementById('enablePassword').checked = config.security.enablePassword;
+      document.getElementById('passwordSection').style.display = config.security.enablePassword ? 'block' : 'none';
+      document.getElementById('pdfPassword').value = config.security.password || '';
+      
+      document.getElementById('enableWatermark').checked = config.security.enableWatermark;
+      document.getElementById('watermarkSection').style.display = config.security.enableWatermark ? 'block' : 'none';
+      document.getElementById('watermarkText').value = config.security.watermarkText || '';
+      document.getElementById('watermarkOpacity').value = config.security.watermarkOpacity;
+      document.getElementById('watermarkOpacityValue').textContent = config.security.watermarkOpacity + '%';
+      document.getElementById('watermarkPosition').value = config.security.watermarkPosition;
+      
+      document.getElementById('enableQRCode').checked = config.security.enableQRCode;
+      document.getElementById('qrCodeSection').style.display = config.security.enableQRCode ? 'block' : 'none';
+      document.getElementById('qrCodeData').value = config.security.qrCodeData || '';
+      
+      // Observações adicionais
+      document.getElementById('additionalNotes').value = config.additionalNotes || '';
+      
+      // Imagem de fundo
+      if (config.backgroundImage) {
+        backgroundImageData = config.backgroundImage;
+        document.getElementById('bgImagePreviewContainer').innerHTML = `<img src="${backgroundImageData}" style="max-width: 200px; max-height: 100px; margin-top: 10px; border-radius: 5px; border: 1px solid #ddd;" alt="Background Preview">`;
+        document.getElementById('bgImageOpacitySection').style.display = 'block';
+      }
+      
+      updatePreview();
+      alert('Configuração carregada com sucesso!');
+    }
+    
+    // Função para excluir configuração
+    function deleteConfiguration(index) {
+      if (confirm('Tem certeza que deseja excluir esta configuração?')) {
+        savedConfigurations.splice(index, 1);
+        localStorage.setItem('pdfConfigurations', JSON.stringify(savedConfigurations));
+        loadSavedConfigurationsList();
+      }
+    }
+    
+    // Função para gerar conteúdo estruturado do PDF
+    function generatePDFContent() {
+      let content = {
+        header: {
+          title: "RELATÓRIO DE MANUTENÇÃO PREVENTIVA",
+          company: document.getElementById('pdfCompanyName').value || 'Nome da Empresa',
+          technician: document.getElementById('pdfTechnicianName').value || 'Nome do Técnico',
+          date: new Date(document.getElementById('pdfReportDate').value || Date.now()).toLocaleDateString('pt-BR'),
+          contractNumber: document.getElementById('contractNumber').value,
+          serviceOrder: document.getElementById('serviceOrder').value
+        },
+        sections: []
+      };
+      // Seção: Ao Chegar no Cliente
+      const chegadaSection = {
+        title: "Ao Chegar no Cliente",
+        items: []
+      };
+      
+      document.querySelectorAll('section.card:nth-of-type(1) input[type="checkbox"]:checked').forEach(checkbox => {
+        chegadaSection.items.push(checkbox.closest('label').textContent.trim().replace('*', ''));
+      });
+      
+      if (chegadaSection.items.length > 0) {
+        content.sections.push(chegadaSection);
+      }
+      // Seção: Máquinas
+      const machines = document.querySelectorAll('.machine-block');
+      machines.forEach((machine, index) => {
+        const machineSection = {
+          title: `Máquina ${index + 1}`,
+          subsections: []
+        };
+        // Informações básicas
+        const basicInfo = {
+          title: "Informações Básicas",
+          fields: []
+        };
+        machine.querySelectorAll('input[type="text"]').forEach(input => {
+          if (input.value.trim()) {
+            const label = input.closest('.input-group')?.querySelector('label');
+            const fieldName = label ? label.textContent.replace('*', '') : input.placeholder;
+            basicInfo.fields.push({
+              name: fieldName,
+              value: input.value.trim()
+            });
+          }
+        });
+        if (basicInfo.fields.length > 0) {
+          machineSection.subsections.push(basicInfo);
+        }
+        // Status do Windows
+        const windowsRadio = machine.querySelector('input[type="radio"]:checked');
+        if (windowsRadio) {
+          machineSection.subsections.push({
+            title: "Status do Windows",
+            fields: [{
+              name: "Windows Ativado",
+              value: windowsRadio.value === 'sim' ? 'Sim' : 'Não'
+            }]
+          });
+          // Se não estiver ativado, mostrar ações
+          if (windowsRadio.value === 'nao') {
+            const windowsActions = {
+              title: "Ações Realizadas",
+              items: []
+            };
+            
+            machine.querySelectorAll('.windows-not-activated input[type="checkbox"]:checked').forEach(checkbox => {
+              windowsActions.items.push(checkbox.closest('label').textContent.trim());
+            });
+            
+            if (windowsActions.items.length > 0) {
+              machineSection.subsections.push(windowsActions);
+            }
+          }
+        }
+        // Processos realizados
+        const processes = {
+          title: "Processos Realizados",
+          items: []
+        };
+        
+        machine.querySelectorAll('h3 ~ label input[type="checkbox"]:checked').forEach(checkbox => {
+          if (!checkbox.closest('.windows-not-activated')) {
+            processes.items.push(checkbox.closest('label').textContent.trim());
+          }
+        });
+        
+        if (processes.items.length > 0) {
+          machineSection.subsections.push(processes);
+        }
+        content.sections.push(machineSection);
+      });
+      // Seção: Infraestrutura
+      const infras = document.querySelectorAll('.infra-block');
+      if (infras.length > 0) {
+        const infraSection = {
+          title: "Itens de Infraestrutura",
+          items: []
+        };
+        infras.forEach((infra, index) => {
+          const infraItem = {
+            title: `Item ${index + 1}`,
+            fields: []
+          };
+          infra.querySelectorAll('input[type="text"], textarea').forEach(input => {
+            if (input.value.trim()) {
+              const label = input.closest('.input-group, .photo-upload')?.querySelector('label');
+              const fieldName = label ? label.textContent.replace('*', '') : input.placeholder;
+              infraItem.fields.push({
+                name: fieldName,
+                value: input.value.trim()
+              });
+            }
+          });
+          infraSection.items.push(infraItem);
+        });
+        content.sections.push(infraSection);
+      }
+      // Seção: Treinamento
+      const treinamentoSection = {
+        title: "Treinamento",
+        items: []
+      };
+      
+      document.querySelectorAll('section.card:nth-of-type(2) input[type="checkbox"]:checked').forEach(checkbox => {
+        treinamentoSection.items.push(checkbox.closest('label').textContent.trim());
+      });
+      
+      if (treinamentoSection.items.length > 0) {
+        content.sections.push(treinamentoSection);
+      }
+      // Seção: Observações
+      const observacoes = document.getElementById('observacoes').value.trim();
+      if (observacoes) {
+        content.sections.push({
+          title: "Observações Técnicas",
+          content: observacoes
+        });
+      }
+      // Seção: Assinaturas
+      const clientName = document.getElementById('clientName').value.trim();
+      const techName = document.getElementById('techName').value.trim();
+      
+      if (clientName || techName) {
+        content.sections.push({
+          title: "Assinaturas",
+          signatures: {
+            client: clientName,
+            technician: techName
+          }
+        });
+      }
+      // Seção: Encerramento
+      const encerramentoSection = {
+        title: "Encerramento do Atendimento",
+        items: []
+      };
+      
+      document.querySelectorAll('section.card:nth-of-type(3) input[type="checkbox"]:checked').forEach(checkbox => {
+        encerramentoSection.items.push(checkbox.closest('label').textContent.trim());
+      });
+      
+      if (encerramentoSection.items.length > 0) {
+        content.sections.push(encerramentoSection);
+      }
+      return content;
+    }
+    
+    // Classe para gerenciar layout do PDF
+    class PDFLayout {
+      constructor(doc, margins = { top: 20, bottom: 20, left: 15, right: 15 }) {
+        this.doc = doc;
+        this.margins = margins;
+        this.pageHeight = doc.internal.pageSize.height;
+        this.pageWidth = doc.internal.pageSize.width;
+        this.contentWidth = this.pageWidth - margins.left - margins.right;
+        this.currentY = margins.top;
+        this.currentPage = 1;
+      }
+      // Verifica se há espaço suficiente para o conteúdo
+      checkSpace(requiredHeight) {
+        return this.currentY + requiredHeight <= this.pageHeight - this.margins.bottom;
+      }
+      // Adiciona nova página se necessário
+      ensureSpace(requiredHeight) {
+        if (!this.checkSpace(requiredHeight)) {
+          this.addNewPage();
+        }
+      }
+      // Adiciona nova página
+      addNewPage() {
+        this.doc.addPage();
+        this.currentPage++;
+        this.currentY = this.margins.top;
+        this.addPageHeader();
+        this.addPageFooter();
+      }
+      // Adiciona cabeçalho da página
+      addPageHeader() {
+        const companyName = document.getElementById('pdfCompanyName').value || 'Nome da Empresa';
+        this.doc.setFontSize(8);
+        this.doc.setTextColor(100);
+        this.doc.text(companyName, this.margins.left, 10);
+        this.doc.text(`Página ${this.currentPage}`, this.pageWidth - this.margins.right, 10, { align: 'right' });
+        
+        // Linha separadora
+        this.doc.setDrawColor(200);
+        this.doc.line(this.margins.left, 15, this.pageWidth - this.margins.right, 15);
+        
+        this.currentY = 20;
+      }
+      // Adiciona rodapé da página
+      addPageFooter() {
+        const footerText = document.getElementById('customFooter').value || '';
+        if (footerText) {
+          this.doc.setFontSize(6);
+          this.doc.setTextColor(150);
+          const footerLines = this.doc.splitTextToSize(footerText, this.contentWidth);
+          let footerY = this.pageHeight - this.margins.bottom + 5;
+          
+          footerLines.forEach(line => {
+            this.doc.text(line, this.pageWidth / 2, footerY, { align: 'center' });
+            footerY += 4;
+          });
+        }
+      }
+      // Adiciona título de seção
+      addSectionTitle(title, level = 1) {
+        const fontSize = level === 1 ? 14 : 12;
+        const spacing = level === 1 ? 8 : 6;
+        
+        this.ensureSpace(fontSize + spacing);
+        
+        this.doc.setFontSize(fontSize);
+        this.doc.setTextColor(document.getElementById('primaryColor').value);
+        this.doc.text(title.toUpperCase(), this.margins.left, this.currentY);
+        
+        // Linha abaixo do título
+        this.doc.setDrawColor(document.getElementById('primaryColor').value);
+        this.doc.setLineWidth(0.5);
+        this.doc.line(this.margins.left, this.currentY + 2, this.margins.left + 50, this.currentY + 2);
+        
+        this.currentY += fontSize + spacing;
+      }
+      // Adiciona subtítulo
+      addSubsectionTitle(title) {
+        this.ensureSpace(10);
+        
+        this.doc.setFontSize(10);
+        this.doc.setTextColor(document.getElementById('secondaryColor').value);
+        this.doc.text(title, this.margins.left, this.currentY);
+        
+        this.currentY += 8;
+      }
+      // Adiciona campo de informação
+      addField(label, value, indent = 0) {
+        const labelHeight = 5;
+        const valueLines = this.doc.splitTextToSize(value, this.contentWidth - indent - 5);
+        const valueHeight = valueLines.length * 4;
+        
+        this.ensureSpace(labelHeight + valueHeight + 2);
+        
+        this.doc.setFontSize(8);
+        this.doc.setTextColor(80);
+        this.doc.text(label + ':', this.margins.left + indent, this.currentY);
+        
+        this.doc.setTextColor(0);
+        this.doc.text(valueLines, this.margins.left + indent + 5, this.currentY + 4);
+        
+        this.currentY += labelHeight + valueHeight + 2;
+      }
+      // Adiciona item de lista
+      addListItem(text, indent = 5) {
+        const lines = this.doc.splitTextToSize(text, this.contentWidth - indent - 10);
+        const height = lines.length * 4;
+        
+        this.ensureSpace(height + 2);
+        
+        this.doc.setFontSize(8);
+        this.doc.setTextColor(0);
+        this.doc.text('•', this.margins.left + indent, this.currentY);
+        this.doc.text(lines, this.margins.left + indent + 5, this.currentY);
+        
+        this.currentY += height + 2;
+      }
+      // Adiciona parágrafo
+      addParagraph(text, indent = 0) {
+        const lines = this.doc.splitTextToSize(text, this.contentWidth - indent);
+        const height = lines.length * 4;
+        
+        this.ensureSpace(height + 2);
+        
+        this.doc.setFontSize(8);
+        this.doc.setTextColor(0);
+        this.doc.text(lines, this.margins.left + indent, this.currentY);
+        
+        this.currentY += height + 2;
+      }
+      // Adiciona espaço vertical
+      addSpace(height) {
+        this.currentY += height;
+      }
+      // Adiciona caixa com borda laranja para seções de máquina
+      addMachineBox(title) {
+        const boxHeight = 10;
+        this.ensureSpace(boxHeight + 5);
+        
+        // Desenha a caixa com borda laranja
+        this.doc.setDrawColor(document.getElementById('primaryColor').value);
+        this.doc.setLineWidth(0.5);
+        this.doc.rect(this.margins.left, this.currentY, this.contentWidth, boxHeight);
+        
+        // Adiciona o título dentro da caixa
+        this.doc.setFontSize(10);
+        this.doc.setTextColor(document.getElementById('primaryColor').value);
+        this.doc.text(title.toUpperCase(), this.margins.left + 5, this.currentY + 6);
+        
+        this.currentY += boxHeight + 5;
+      }
+      // Adiciona assinaturas
+      addSignatures(clientName, techName) {
+        this.ensureSpace(40);
+        
+        const signatureWidth = 60;
+        const signatureHeight = 30;
+        const spacing = 20;
+        
+        // Linhas para assinaturas
+        this.doc.setDrawColor(0);
+        this.doc.setLineWidth(0.5);
+        
+        // Assinatura do cliente
+        const clientX = this.margins.left;
+        this.doc.line(clientX, this.currentY + signatureHeight, clientX + signatureWidth, this.currentY + signatureHeight);
+        
+        this.doc.setFontSize(8);
+        this.doc.setTextColor(0);
+        this.doc.text(clientName || '_________________________', clientX, this.currentY + signatureHeight + 5);
+        this.doc.text('Responsável', clientX + signatureWidth/2, this.currentY + signatureHeight + 10, { align: 'center' });
+        
+        // Assinatura do técnico
+        const techX = this.pageWidth - this.margins.right - signatureWidth;
+        this.doc.line(techX, this.currentY + signatureHeight, techX + signatureWidth, this.currentY + signatureHeight);
+        
+        this.doc.text(techName || '_________________________', techX, this.currentY + signatureHeight + 5);
+        this.doc.text('Técnico', techX + signatureWidth/2, this.currentY + signatureHeight + 10, { align: 'center' });
+        
+        this.currentY += signatureHeight + 20;
+      }
+    }
+    
+    // Função para atualizar prévia
+    function updatePreview() {
+      const previewContent = document.getElementById('pdfPreviewContent');
+      if (!previewContent) return;
+      
+      // Obter valores dos campos
+      const companyName = document.getElementById('pdfCompanyName').value || 'Nome da Empresa';
+      const technicianName = document.getElementById('pdfTechnicianName').value || 'Nome do Técnico';
+      const reportDate = document.getElementById('pdfReportDate').value;
+      const formattedDate = reportDate ? new Date(reportDate).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR');
+      
+      // Cores
+      const primaryColor = document.getElementById('primaryColor').value;
+      const secondaryColor = document.getElementById('secondaryColor').value;
+      const textColor = document.getElementById('textColor').value;
+      const backgroundColor = document.getElementById('backgroundColor').value;
+      
+      // Fontes
+      const fontFamily = document.getElementById('fontFamily').value;
+      const titleFontSize = document.getElementById('titleFontSize').value;
+      const subtitleFontSize = document.getElementById('subtitleFontSize').value;
+      const bodyFontSize = document.getElementById('bodyFontSize').value;
+      const footerFontSize = document.getElementById('footerFontSize').value;
+      
+      // Estilos
+      const isBold = document.getElementById('boldToggle').classList.contains('active');
+      const isItalic = document.getElementById('italicToggle').classList.contains('active');
+      const isUnderline = document.getElementById('underlineToggle').classList.contains('active');
+      const lineHeight = document.getElementById('lineHeight').value;
+      const alignment = getSelectedAlignment();
+      
+      // Campos extras
+      const contractNumber = document.getElementById('contractNumber').value;
+      const serviceOrder = document.getElementById('serviceOrder').value;
+      const technicalManager = document.getElementById('technicalManager').value;
+      const customFooter = document.getElementById('customFooter').value;
+      
+      // Marca d'água
+      const enableWatermark = document.getElementById('enableWatermark').checked;
+      const watermarkText = document.getElementById('watermarkText').value;
+      const watermarkOpacity = document.getElementById('watermarkOpacity').value;
+      
+      // Imagem de fundo e opacidade
+      const bgImageOpacity = document.getElementById('bgImageOpacity').value / 100;
+      
+      // Gerar HTML da prévia
+      let previewHTML = `
+        <div style="
+          width: 100%;
+          height: 100%;
+          background-color: ${backgroundColor};
+          font-family: ${fontFamily};
+          color: ${textColor};
+          position: relative;
+          padding: 20mm;
+          box-sizing: border-box;
+          line-height: ${lineHeight};
+          text-align: ${alignment};
+        ">
+      `;
+      
+      // Imagem de fundo com opacidade
+      if (backgroundImageData) {
+        previewHTML += `
+          <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('${backgroundImageData}');
+            background-size: cover;
+            background-position: center;
+            opacity: ${bgImageOpacity};
+            z-index: 1;
+          "></div>
+        `;
+      }
+      
+      // Conteúdo principal
+      previewHTML += `
+        <div style="position: relative; z-index: 2;">
+          <!-- Cabeçalho -->
+          <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid ${primaryColor}; padding-bottom: 15px;">
+      `;
+      
+      // Logo
+      if (logoImageData) {
+        const logoPosition = document.getElementById('logoPosition').value;
+        const logoSize = document.getElementById('logoSize').value;
+        let logoStyle = `max-width: ${logoSize}px; max-height: 60px; margin-bottom: 15px;`;
+        
+        if (logoPosition === 'top-left') logoStyle += ' float: left; margin-right: 20px; margin-bottom: 0;';
+        else if (logoPosition === 'top-right') logoStyle += ' float: right; margin-left: 20px; margin-bottom: 0;';
+        
+        previewHTML += `<img src="${logoImageData}" style="${logoStyle}" alt="Logo">`;
+      }
+      
+      previewHTML += `
+        <h1 style="
+          font-size: ${titleFontSize}pt;
+          color: ${primaryColor};
+          margin: 10px 0;
+          font-weight: ${isBold ? 'bold' : 'normal'};
+          font-style: ${isItalic ? 'italic' : 'normal'};
+          text-decoration: ${isUnderline ? 'underline' : 'none'};
+        ">RELATÓRIO DE MANUTENÇÃO PREVENTIVA</h1>
+        
+        <div style="font-size: ${subtitleFontSize}pt; color: ${secondaryColor}; margin: 5px 0;">
+          Empresa: ${companyName}
+        </div>
+        <div style="font-size: ${subtitleFontSize}pt; color: ${secondaryColor}; margin: 5px 0;">
+          Data: ${formattedDate}
+        </div>
+        <div style="font-size: ${subtitleFontSize}pt; color: ${secondaryColor}; margin: 5px 0;">
+          Técnico: ${technicianName}
+        </div>
+      </div>
+      
+      <!-- Campos extras -->
+      `;
+      
+      if (contractNumber || serviceOrder || technicalManager) {
+        previewHTML += `
+          <div style="margin-bottom: 20px; padding: 10px; border: 1px solid ${primaryColor}; border-radius: 5px;">
+            <h3 style="color: ${primaryColor}; font-size: ${subtitleFontSize}pt; margin-bottom: 10px;">Informações Adicionais</h3>
+        `;
+        
+        if (contractNumber) previewHTML += `<p style="font-size: ${bodyFontSize}pt; margin: 5px 0;"><strong>Contrato:</strong> ${contractNumber}</p>`;
+        if (serviceOrder) previewHTML += `<p style="font-size: ${bodyFontSize}pt; margin: 5px 0;"><strong>OS:</strong> ${serviceOrder}</p>`;
+        if (technicalManager) previewHTML += `<p style="font-size: ${bodyFontSize}pt; margin: 5px 0;"><strong>Responsável Técnico:</strong> ${technicalManager}</p>`;
+        
+        previewHTML += `</div>`;
+      }
+      
+      // Adicionar dados das máquinas
+      const machines = document.querySelectorAll('.machine-block');
+      machines.forEach((machine, index) => {
+        previewHTML += `
+          <div style="margin-bottom: 20px; border: 2px solid ${primaryColor}; border-radius: 8px; padding: 15px;">
+            <h3 style="color: ${primaryColor}; font-size: ${subtitleFontSize}pt; margin-bottom: 10px; text-align: center;">MÁQUINA ${index + 1}</h3>
+        `;
+        
+        // Campos de texto
+        machine.querySelectorAll('input[type="text"]').forEach(input => {
+          if (input.value.trim()) {
+            const label = input.closest('.input-group')?.querySelector('label');
+            const fieldName = label ? label.textContent.replace('*', '') : input.placeholder;
+            previewHTML += `<p style="font-size: ${bodyFontSize}pt; margin: 5px 0;"><strong>${fieldName}:</strong> ${input.value.trim()}</p>`;
+          }
+        });
+        
+        // Status do Windows
+        const windowsRadio = machine.querySelector('input[type="radio"]:checked');
+        if (windowsRadio) {
+          previewHTML += `<p style="font-size: ${bodyFontSize}pt; margin: 5px 0;"><strong>Windows Ativado:</strong> ${windowsRadio.value === 'sim' ? 'Sim' : 'Não'}</p>`;
+        }
+        
+        // Checkboxes marcados
+        const checkedItems = machine.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkedItems.length > 0) {
+          previewHTML += `<p style="font-size: ${bodyFontSize}pt; margin: 5px 0;"><strong>Itens verificados:</strong></p>`;
+          previewHTML += `<ul style="font-size: ${bodyFontSize}pt; margin: 5px 0 5px 20px;">`;
+          checkedItems.forEach(item => {
+            previewHTML += `<li>${item.closest('label').textContent.trim()}</li>`;
+          });
+          previewHTML += `</ul>`;
+        }
+        
+        previewHTML += `</div>`;
+      });
+      
+      // Seções do relatório
+      previewHTML += `
+          <div style="margin-bottom: 20px;">
+            <h2 style="color: ${primaryColor}; font-size: ${subtitleFontSize}pt; border-bottom: 1px solid ${primaryColor}; padding-bottom: 5px;">
+              Ao Chegar no Cliente
+            </h2>
+            <p style="font-size: ${bodyFontSize}pt;">✓ Abrir chamado no Milvus</p>
+            <p style="font-size: ${bodyFontSize}pt;">✓ Iniciar atendimento</p>
+          </div>
+          
+          <div style="margin-bottom: 20px;">
+            <h2 style="color: ${primaryColor}; font-size: ${subtitleFontSize}pt; border-bottom: 1px solid ${primaryColor}; padding-bottom: 5px;">
+              Observações
+            </h2>
+            <p style="font-size: ${bodyFontSize}pt; color: #666;">Observações técnicas e recomendações</p>
+          </div>
+      `;
+      
+      // Rodapé customizável
+      if (customFooter) {
+        previewHTML += `
+          <div style="
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            font-size: ${footerFontSize}pt;
+            color: ${secondaryColor};
+            text-align: center;
+            border-top: 1px solid ${primaryColor};
+            padding-top: 10px;
+          ">
+            ${customFooter}
+          </div>
+        `;
+      }
+      
+      previewHTML += `</div>`;
+      
+      // Marca d'água
+      if (enableWatermark && watermarkText) {
+        const watermarkPosition = document.getElementById('watermarkPosition').value;
+        let watermarkStyle = `
+          position: absolute;
+          font-size: 48pt;
+          color: ${primaryColor};
+          opacity: ${watermarkOpacity / 100};
+          font-weight: bold;
+          z-index: 3;
+          pointer-events: none;
+        `;
+        
+        switch (watermarkPosition) {
+          case 'center':
+            watermarkStyle += 'top: 50%; left: 50%; transform: translate(-50%, -50%);';
+            break;
+          case 'diagonal':
+            watermarkStyle += 'top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg);';
+            break;
+          case 'top-right':
+            watermarkStyle += 'top: 20px; right: 20px;';
+            break;
+          case 'bottom-left':
+            watermarkStyle += 'bottom: 20px; left: 20px;';
+            break;
+        }
+        
+        previewHTML += `<div style="${watermarkStyle}">${watermarkText}</div>`;
+      }
+      
+      previewHTML += `</div>`;
+      
+      // Atualizar o conteúdo da prévia
+      previewContent.innerHTML = previewHTML;
+    }
+    
+    // Função para adicionar máquina
+    function addMachine() {
+      machineCounter++;
+      const container = document.getElementById("machines");
+      const div = document.createElement("div");
+      div.className = "card machine-block";
+      div.innerHTML = `
+        <h2><i data-lucide="monitor-smartphone"></i> Máquina ${machineCounter}</h2>
+        <div class="input-group">
+          <label class="required-label">Nome da Máquina</label>
+          <input type="text" placeholder="Digite o nome da máquina" class="required-input">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+        
+        <div class="input-group">
+          <label class="required-label">Sistema Operacional</label>
+          <input type="text" placeholder="Digite o sistema operacional" class="required-input">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+        
+        <div class="input-group">
+          <label class="required-label">Verificar armazenamento</label>
+          <input type="text" placeholder="Informe o status do armazenamento" class="required-input">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+        
+        <div class="input-group">
+          <label class="required-label">Verificar memória RAM</label>
+          <input type="text" placeholder="Informe o status da memória RAM" class="required-input">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+        
+        <fieldset>
+          <legend>Windows está ativado:</legend>
+          <label>
+            <input type="radio" name="ativado-${machineCounter}" value="sim" onchange="toggleWindowsSection(this, ${machineCounter})"> Sim
+          </label>
+          <label>
+            <input type="radio" name="ativado-${machineCounter}" value="nao" onchange="toggleWindowsSection(this, ${machineCounter})"> Não
+          </label>
+        </fieldset>
+        
+        <div class="windows-not-activated" style="display:none;">
+          <h3>Caso o Windows não esteja ativado:</h3>
+          <label><input type="checkbox"> Utilizar MAS_1.0_CRC32_1D90323C.cmd</label>
+          <label><input type="checkbox"> Executar comando: irm https://get.activated.win | iex</label>
+        </div>
+        
+        <h3>Continuar processo:</h3>
+        <label><input type="checkbox"> Verificar Windows Update</label>
+        <label><input type="checkbox"> Verificar programas instalados</label>
+        
+        <div class="input-group">
+          <label class="required-label">ID do Anydesk</label>
+          <input type="text" placeholder="Digite o ID do Anydesk" class="required-input">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+        
+        <label><input type="checkbox"> Instalar Milvus</label>
+        <label><input type="checkbox"> Atualizar Navegadores</label>
+        <label><input type="checkbox"> Verificar o Pacote Office, instalar e ativar</label>
+        <label><input type="checkbox"> Instalar o Adobe Reader</label>
+        <label><input type="checkbox"> Instalar o WinRAR</label>
+        <label><input type="checkbox"> Passar o AIDA</label>
+        
+        <h3>Infraestrutura:</h3>
+        <div class="photo-upload">
+          <input type="file" accept="image/*" onchange="previewImage(event, this)" />
+          <textarea placeholder="Legenda da foto"></textarea>
+          <img class="photo-upload-preview" style="display:none;" />
+        </div>
+      `;
+      container.appendChild(div);
+      lucide.createIcons();
+      updateProgressBar();
+      updateGenerateButton();
+    }
+    
+    // Função para adicionar infraestrutura
+    function addInfra() {
+      infraCounter++;
+      const container = document.getElementById("infraestruturas");
+      const div = document.createElement("div");
+      div.className = "card infra-block";
+      div.innerHTML = `
+        <h2><i data-lucide="camera"></i> Infraestrutura ${infraCounter}</h2>
+        <div class="input-group">
+          <label class="required-label">Descrição do Item</label>
+          <input type="text" placeholder="Ex: Roteador, Câmera, Modem, etc." class="required-input">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+        
+        <div class="input-group">
+          <label class="required-label">Localização</label>
+          <input type="text" placeholder="Onde está instalado este item" class="required-input">
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+        
+        <div class="photo-upload">
+          <label>Foto do Item</label>
+          <input type="file" accept="image/*" onchange="previewImage(event, this)" />
+          <textarea placeholder="Legenda da foto"></textarea>
+          <img class="photo-upload-preview" style="display:none;" />
+        </div>
+        
+        <div class="input-group">
+          <label class="required-label">Observações</label>
+          <textarea placeholder="Anotações sobre este item de infraestrutura" class="required-input"></textarea>
+          <div class="error-message">Este campo é obrigatório</div>
+        </div>
+      `;
+      container.appendChild(div);
+      lucide.createIcons();
+      updateProgressBar();
+      updateGenerateButton();
+    }
+    
+    // Função para prévia de imagem
+    function previewImage(event, input) {
+      const img = input.parentElement.querySelector("img");
+      img.src = URL.createObjectURL(event.target.files[0]);
+      img.style.display = "block";
+    }
+    
+    // Função para alternar seção do Windows
+    function toggleWindowsSection(radio, machineNumber) {
+      const machineBlock = radio.closest('.machine-block');
+      const windowsSection = machineBlock.querySelector('.windows-not-activated');
+      
+      if (radio.value === 'nao' && radio.checked) {
+        windowsSection.style.display = 'block';
+      } else {
+        windowsSection.style.display = 'none';
+      }
+    }
+    
+    // Função para atualizar barra de progresso
+    function updateProgressBar() {
+      const checkboxes = document.querySelectorAll("input[type='checkbox']");
+      const checked = [...checkboxes].filter(i => i.checked).length;
+      const total = checkboxes.length;
+      const percent = total ? (checked / total) * 100 : 0;
+      document.getElementById("progressBar").style.width = percent + "%";
+    }
+    
+    // Função para validar formulário
+    function validateForm() {
+      let isValid = true;
+      const missingFields = [];
+      
+      // Limpar estilos de erro anteriores
+      document.querySelectorAll('.invalid').forEach(el => {
+        el.classList.remove('invalid');
+      });
+      document.querySelectorAll('.error-message').forEach(el => {
+        el.style.display = 'none';
+      });
+      
+      // Verificar checkboxes obrigatórios
+      const requiredCheckboxes = document.querySelectorAll('.required-checkbox');
+      requiredCheckboxes.forEach(checkbox => {
+        if (!checkbox.checked) {
+          isValid = false;
+          checkbox.parentElement.classList.add('invalid');
+          missingFields.push(checkbox.parentElement.textContent.trim().replace('*', ''));
+        }
+      });
+      
+      // Verificar se há pelo menos uma máquina
+      const machines = document.querySelectorAll('.machine-block');
+      if (machines.length === 0) {
+        isValid = false;
+        missingFields.push('Adicionar pelo menos uma máquina');
+      }
+      
+      // Verificar campos de texto obrigatórios em cada máquina
+      machines.forEach((machine, index) => {
+        const requiredInputs = machine.querySelectorAll('.required-input');
+        requiredInputs.forEach(input => {
+          if (!input.value.trim()) {
+            isValid = false;
+            input.classList.add('invalid');
+            input.nextElementSibling.style.display = 'block';
+            
+            const label = input.closest('.input-group')?.querySelector('label');
+            const labelText = label ? label.textContent.replace('*', '') : input.placeholder;
+            missingFields.push(`Máquina ${index + 1}: ${labelText}`);
+          }
+        });
+      });
+      
+      // Verificar infraestruturas: se houver, todos os campos são obrigatórios
+      const infras = document.querySelectorAll('.infra-block');
+      infras.forEach((infra, index) => {
+        const inputs = infra.querySelectorAll('.required-input');
+        inputs.forEach(input => {
+          if (!input.value.trim()) {
+            isValid = false;
+            input.classList.add('invalid');
+            input.nextElementSibling.style.display = 'block';
+            
+            const label = input.closest('.input-group')?.querySelector('label');
+            const labelText = label ? label.textContent.replace('*', '') : input.placeholder;
+            missingFields.push(`Infraestrutura ${index + 1}: ${labelText}`);
+          }
+        });
+      });
+      
+      return { isValid, missingFields };
+    }
+    
+    // Função para atualizar botão de gerar relatório
+    function updateGenerateButton() {
+      const generateButton = document.getElementById('generateReportBtn');
+      const { isValid } = validateForm();
+      
+      // Verificar se as assinaturas estão preenchidas
+      const clientName = document.getElementById('clientName').value.trim();
+      const techName = document.getElementById('techName').value.trim();
+      const clientSignature = document.getElementById('clientSignaturePreview').querySelector('img');
+      const techSignature = document.getElementById('techSignaturePreview').querySelector('img');
+      
+      const signaturesValid = clientName && techName && clientSignature && techSignature;
+      
+      if (isValid && signaturesValid) {
+        generateButton.classList.remove('btn-disabled');
+      } else {
+        generateButton.classList.add('btn-disabled');
+      }
+    }
+    
+    // Função para lidar com geração de relatório
+    function handleGenerateReport() {
+      const { isValid, missingFields } = validateForm();
+      
+      // Verificar assinaturas
+      const clientName = document.getElementById('clientName').value.trim();
+      const techName = document.getElementById('techName').value.trim();
+      const clientSignature = document.getElementById('clientSignaturePreview').querySelector('img');
+      const techSignature = document.getElementById('techSignaturePreview').querySelector('img');
+      
+      const signatureMissingFields = [];
+      
+      if (!clientName) {
+        signatureMissingFields.push('Nome do responsável');
+      }
+      if (!techName) {
+        signatureMissingFields.push('Nome do técnico');
+      }
+      if (!clientSignature) {
+        signatureMissingFields.push('Assinatura do responsável');
+      }
+      if (!techSignature) {
+        signatureMissingFields.push('Assinatura do técnico');
+      }
+      
+      const allMissingFields = [...missingFields, ...signatureMissingFields];
+      
+      if (!isValid || signatureMissingFields.length > 0) {
+        // Exibir modal com campos pendentes
+        const missingFieldsModal = document.getElementById('missingFieldsModal');
+        const missingFieldsList = document.getElementById('missingFieldsList');
+        
+        // Limpar lista anterior
+        missingFieldsList.innerHTML = '';
+        
+        // Adicionar campos pendentes à lista
+        allMissingFields.forEach(field => {
+          const li = document.createElement('li');
+          li.textContent = field;
+          missingFieldsList.appendChild(li);
+        });
+        
+        missingFieldsModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        return;
+      }
+      
+      showReportModal();
+    }
+    
+    // Função para mostrar modal de relatório
+    function showReportModal() {
+      const modal = document.getElementById('reportModal');
+      const modalContent = document.getElementById('modalReportContent');
+      
+      let reportContent = "=== CHECKLIST PREVENTIVA ===\n\n";
+      
+      // Seção "Ao Chegar no Cliente"
+      const chegadaSection = document.querySelector('section.card:nth-of-type(1)');
+      const chegadaTitle = chegadaSection.querySelector('h2').textContent.trim();
+      const chegadaItems = chegadaSection.querySelectorAll('input[type="checkbox"]:checked');
+      
+      if (chegadaItems.length > 0) {
+        reportContent += `🔹 ${chegadaTitle}\n`;
+        chegadaItems.forEach(item => {
+          reportContent += `   ✔️ ${item.closest('label').textContent.trim().replace('*', '')}\n`;
+        });
+        reportContent += "\n";
+      }
+      
+      // Máquinas adicionadas
+      const machines = document.querySelectorAll('.machine-block');
+      machines.forEach((machine, index) => {
+        reportContent += `🔹 Máquina ${index + 1}\n`;
+        
+        // Campos de texto
+        const textInputs = machine.querySelectorAll('input[type="text"]');
+        textInputs.forEach(input => {
+          if (input.value.trim()) {
+            const label = input.closest('.input-group')?.querySelector('label');
+            const labelText = label ? label.textContent.replace('*', '') : input.placeholder;
+            reportContent += `   📝 ${labelText}: ${input.value.trim()}\n`;
+          }
+        });
+        
+        // Checkboxes marcados
+        const checkedItems = machine.querySelectorAll('input[type="checkbox"]:checked');
+        if (checkedItems.length > 0) {
+          reportContent += `   ✅ Itens verificados:\n`;
+          checkedItems.forEach(item => {
+            reportContent += `      ✔️ ${item.closest('label').textContent.trim()}\n`;
+          });
+        }
+        
+        // Windows ativado
+        const windowsAtivado = machine.querySelector('input[type="radio"]:checked');
+        if (windowsAtivado) {
+          reportContent += `   🪟 Windows ativado: ${windowsAtivado.value === 'sim' ? 'Sim' : 'Não'}\n`;
+        }
+        
+        reportContent += "\n";
+      });
+      
+      // Infraestruturas adicionadas
+      const infraestruturas = document.querySelectorAll('.infra-block');
+      if (infraestruturas.length > 0) {
+        reportContent += `🔹 Itens de Infraestrutura\n`;
+        infraestruturas.forEach((infra, index) => {
+          reportContent += `   📌 Item ${index + 1}\n`;
+          
+          const textInputs = infra.querySelectorAll('input[type="text"], textarea');
+          textInputs.forEach(input => {
+            if (input.value.trim()) {
+              const label = input.closest('.input-group, .photo-upload')?.querySelector('label');
+              const labelText = label ? label.textContent.replace('*', '') : input.placeholder;
+              reportContent += `      📋 ${labelText}: ${input.value.trim()}\n`;
+            }
+          });
+          
+          reportContent += "\n";
+        });
+      }
+      
+      // Seção Treinamento
+      const treinamentoSection = document.querySelectorAll('section.card')[1];
+      const treinamentoTitle = treinamentoSection.querySelector('h2').textContent.trim();
+      const treinamentoItems = treinamentoSection.querySelectorAll('input[type="checkbox"]:checked');
+      if (treinamentoItems.length > 0) {
+        reportContent += `🔹 ${treinamentoTitle}\n`;
+        treinamentoItems.forEach(item => {
+          reportContent += `   ✔️ ${item.closest('label').textContent.trim()}\n`;
+        });
+        reportContent += "\n";
+      }
+      
+      // Observações
+      const observacoes = document.getElementById('observacoes').value.trim();
+      if (observacoes) {
+        reportContent += `🔹 Observações:\n   ${observacoes}\n\n`;
+      }
+      
+      // Assinaturas
+      const clientName = document.getElementById('clientName').value.trim();
+      const techName = document.getElementById('techName').value.trim();
+      
+      if (clientName || techName) {
+        reportContent += `🔹 Assinaturas\n`;
+        if (clientName) reportContent += `   👤 Responsável: ${clientName}\n`;
+        if (techName) reportContent += `   🔧 Técnico: ${techName}\n`;
+        reportContent += "\n";
+      }
+      
+      // Seção Encerramento
+      const encerramentoSection = document.querySelectorAll('section.card')[3];
+      const encerramentoTitle = encerramentoSection.querySelector('h2').textContent.trim();
+      const encerramentoItems = encerramentoSection.querySelectorAll('input[type="checkbox"]:checked');
+      if (encerramentoItems.length > 0) {
+        reportContent += `🔹 ${encerramentoTitle}\n`;
+        encerramentoItems.forEach(item => {
+          reportContent += `   ✔️ ${item.closest('label').textContent.trim()}\n`;
+        });
+        reportContent += "\n";
+      }
+      
+      modalContent.textContent = reportContent;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    // Função para fechar modal
+    function closeModal() {
+      const modal = document.getElementById('reportModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Função para fechar modal de campos pendentes
+    function closeMissingFieldsModal() {
+      const missingFieldsModal = document.getElementById('missingFieldsModal');
+      missingFieldsModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+    }
+    
+    // Função para fechar modal de personalização de PDF
+    function closePdfCustomModal() {
+      const pdfCustomModal = document.getElementById('pdfCustomModal');
+      pdfCustomModal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      
+      // Limpar dados
+      backgroundImageData = null;
+      logoImageData = null;
+      document.getElementById('pdfBackgroundImage').value = '';
+      document.getElementById('pdfLogo').value = '';
+      document.getElementById('bgImagePreviewContainer').innerHTML = '';
+      document.getElementById('logoPreviewContainer').innerHTML = '';
+    }
+    
+    // Função para salvar como TXT
+    function saveAsTxt() {
+      const modalContent = document.getElementById('modalReportContent').textContent;
+      const blob = new Blob([modalContent], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'relatorio_preventiva.txt';
+      link.click();
+    }
+    
+    // Função para salvar como PDF
+    function saveAsPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Configurações de fonte
+      doc.setFont("helvetica");
+      
+      // Título
+      doc.setFontSize(18);
+      doc.text("RELATÓRIO DE MANUTENÇÃO PREVENTIVA", 105, 20, { align: "center" });
+      
+      // Conteúdo do relatório
+      const modalContent = document.getElementById('modalReportContent').textContent;
+      const lines = doc.splitTextToSize(modalContent, 180);
+      
+      // Adicionar o conteúdo ao PDF
+      doc.setFontSize(10);
+      let yPosition = 40;
+      
+      lines.forEach(line => {
+        if (yPosition > 280) {
+          doc.addPage();
+          yPosition = 20;
+        }
+        doc.text(line, 15, yPosition);
+        yPosition += 6;
+      });
+      
+      doc.save('relatorio_preventiva.pdf');
+    }
+    
+    // Função para salvar como PDF personalizado
+    function saveAsCustomPDF() {
+      const pdfCustomModal = document.getElementById('pdfCustomModal');
+      pdfCustomModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Atualizar prévia inicial
+      updatePreview();
+    }
+    
+    // Função para gerar PDF personalizado
+    function generateCustomPDF() {
+      const { jsPDF } = window.jspdf;
+      
+      // Capturar a pré-visualização como imagem
+      const previewElement = document.getElementById('pdfPreviewContent');
+      
+      html2canvas(previewElement, {
+        scale: 2, // Melhor qualidade
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null // Preservar transparência
+      }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4'
+        });
+        
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        
+        // Adicionar a imagem capturada ao PDF
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        
+        // Salvar PDF
+        const companyName = document.getElementById('pdfCompanyName').value || 'empresa';
+        const formattedCompanyName = companyName.replace(/\s+/g, '_').toLowerCase();
+        const date = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+        const filename = `relatorio_preventiva_${formattedCompanyName}_${date}.pdf`;
+        
+        pdf.save(filename);
+        
+        // Mostrar mensagem de sucesso
+        alert(`PDF gerado com sucesso!\n\nO relatório contém:\n- Todas as personalizações visuais aplicadas\n- Plano de fundo e marca d'água (se configurados)\n- Cores e fontes personalizadas\n- Logo e elementos gráficos`);
+        
+        // Fechar modal
+        closePdfCustomModal();
+      }).catch(error => {
+        console.error('Erro ao gerar PDF:', error);
+        alert('Ocorreu um erro ao gerar o PDF. Tente novamente.');
+      });
+    }
+    
+    // Função para copiar para área de transferência
+    function copyToClipboard() {
+      const modalContent = document.getElementById('modalReportContent').textContent;
+      navigator.clipboard.writeText(modalContent).then(() => {
+        alert('Relatório copiado para a área de transferência!');
+      });
+    }
+    
+    // Variáveis para controle de páginas
+    let currentPage = 1;
+    let totalPages = 1;
+    
+    // Função para navegar para página anterior
+    function previousPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        updatePageNavigation();
+        updatePreview();
+      }
+    }
+    
+    // Função para navegar para próxima página
+    function nextPage() {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updatePageNavigation();
+        updatePreview();
+      }
+    }
+    
+    // Função para atualizar controles de navegação
+    function updatePageNavigation() {
+      document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+      document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+      document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+    }
+    
+    // Funções para assinaturas
+    function openSignatureModal(type) {
+      currentSignatureType = type;
+      const modal = document.getElementById('signatureModal');
+      const title = document.getElementById('signatureModalTitle');
+      
+      title.textContent = type === 'client' ? 'Assinatura do Cliente' : 'Assinatura do Técnico';
+      
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Configurar canvas
+      signatureCanvas = document.getElementById('signatureCanvas');
+      signatureCtx = signatureCanvas.getContext('2d');
+      
+      // Configurar eventos do canvas
+      setupSignatureCanvas();
+    }
+    
+    // Função para configurar canvas de assinatura
+    function setupSignatureCanvas() {
+      signatureCanvas = document.getElementById('signatureCanvas');
+      signatureCtx = signatureCanvas.getContext('2d');
+      
+      // Configurar dimensões do canvas
+      const rect = signatureCanvas.getBoundingClientRect();
+      signatureCanvas.width = rect.width;
+      signatureCanvas.height = rect.height;
+      
+      // Limpar canvas
+      signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+      
+      // Configurar eventos do canvas
+      signatureCanvas.addEventListener('mousedown', startDrawing);
+      signatureCanvas.addEventListener('mousemove', draw);
+      signatureCanvas.addEventListener('mouseup', stopDrawing);
+      signatureCanvas.addEventListener('mouseout', stopDrawing);
+      
+      // Eventos touch para dispositivos móveis
+      signatureCanvas.addEventListener('touchstart', handleTouch);
+      signatureCanvas.addEventListener('touchmove', handleTouch);
+      signatureCanvas.addEventListener('touchend', stopDrawing);
+    }
+    
+    // Função para iniciar desenho
+    function startDrawing(e) {
+      isDrawing = true;
+      [lastX, lastY] = getMousePos(e);
+    }
+    
+    // Função para desenhar
+    function draw(e) {
+      if (!isDrawing) return;
+      
+      const [currentX, currentY] = getMousePos(e);
+      
+      signatureCtx.beginPath();
+      signatureCtx.moveTo(lastX, lastY);
+      signatureCtx.lineTo(currentX, currentY);
+      // Usar a cor primária (laranja)
+      signatureCtx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary');
+      signatureCtx.lineWidth = 3;
+      signatureCtx.lineCap = 'round';
+      signatureCtx.lineJoin = 'round';
+      signatureCtx.stroke();
+      
+      [lastX, lastY] = [currentX, currentY];
+    }
+    
+    // Função para parar desenho
+    function stopDrawing() {
+      isDrawing = false;
+    }
+    
+    // Função para obter posição do mouse/touch
+    function getMousePos(e) {
+      const rect = signatureCanvas.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      return [
+        clientX - rect.left,
+        clientY - rect.top
+      ];
+    }
+    
+    // Função para lidar com eventos touch
+    function handleTouch(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 
+                                       e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+        clientX: touch.clientX,
+        clientY: touch.clientY
+      });
+      signatureCanvas.dispatchEvent(mouseEvent);
+    }
+    
+    // Função para limpar canvas de assinatura
+    function clearSignatureCanvas() {
+      signatureCtx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+    }
+    
+    // Função para salvar assinatura
+    function saveSignature() {
+      const signatureData = signatureCanvas.toDataURL();
+      const previewId = currentSignatureType === 'client' ? 'clientSignaturePreview' : 'techSignaturePreview';
+      const preview = document.getElementById(previewId);
+      
+      preview.innerHTML = `<img src="${signatureData}" alt="Assinatura">`;
+      
+      // Fechar modal
+      const modal = document.getElementById('signatureModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = 'auto';
+      
+      // Limpar canvas
+      clearSignatureCanvas();
+      
+      // Atualizar botão de gerar relatório
+      updateGenerateButton();
+    }
+    
+    // Adicionar listeners para atualizar botão de gerar relatório
+    document.addEventListener('change', updateGenerateButton);
+    document.addEventListener('input', updateGenerateButton);
+    
+    // Atualizar ícones quando necessário
+    document.addEventListener('DOMContentLoaded', function() {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

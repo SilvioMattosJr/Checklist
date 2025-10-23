@@ -1,0 +1,76 @@
+/* Template Corporativo */
+.template-corporate .template-preview {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+}
+
+.template-corporate.selected {
+  border-color: #2c3e50;
+  background: linear-gradient(135deg, rgba(44, 62, 80, 0.05) 0%, rgba(52, 73, 94, 0.05) 100%);
+}
+
+/* Aplicar estilo corporativo ao PDF */
+.template-corporate #pdfPreviewContent {
+  background: #ffffff;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  border: 1px solid #e0e0e0;
+}
+
+.template-corporate #pdfPreviewContent .pdf-header {
+  border-bottom: 3px solid #2c3e50;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.template-corporate #pdfPreviewContent .pdf-title {
+  color: #2c3e50;
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.template-corporate #pdfPreviewContent .pdf-company-info {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+.template-corporate #pdfPreviewContent .pdf-content-section h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 0.5rem;
+  margin: 2rem 0 1rem 0;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.template-corporate #pdfPreviewContent .pdf-content-section p {
+  color: #2c3e50;
+  line-height: 1.7;
+  margin-bottom: 0.8rem;
+  text-align: justify;
+}
+
+.template-corporate #pdfPreviewContent .pdf-footer {
+  border-top: 1px solid #bdc3c7;
+  padding-top: 1rem;
+  margin-top: 2rem;
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.template-corporate #pdfPreviewContent .signature-area {
+  border-top: 1px solid #bdc3c7;
+  margin-top: 3rem;
+  padding-top: 1rem;
+}
+
+.template-corporate #pdfPreviewContent .signature-line {
+  border-top: 1px solid #2c3e50;
+  width: 200px;
+  margin: 0.5rem 0;
+}

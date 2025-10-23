@@ -1,0 +1,73 @@
+/* Template Minimalista */
+.template-minimal .template-preview {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: #495057;
+  border: 2px solid #dee2e6;
+}
+
+.template-minimal.selected {
+  border-color: #495057;
+  background: linear-gradient(135deg, rgba(248, 249, 250, 0.5) 0%, rgba(233, 236, 239, 0.5) 100%);
+}
+
+/* Aplicar estilo minimalista ao PDF */
+.template-minimal #pdfPreviewContent {
+  background: #ffffff;
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  color: #212529;
+}
+
+.template-minimal #pdfPreviewContent .pdf-header {
+  text-align: center;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.template-minimal #pdfPreviewContent .pdf-title {
+  color: #212529;
+  font-size: 1.8rem;
+  font-weight: 300;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.5px;
+}
+
+.template-minimal #pdfPreviewContent .pdf-company-info {
+  color: #6c757d;
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+.template-minimal #pdfPreviewContent .pdf-content-section h2 {
+  color: #212529;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 1.5rem 0 0.75rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.template-minimal #pdfPreviewContent .pdf-content-section p {
+  color: #495057;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.template-minimal #pdfPreviewContent .pdf-footer {
+  color: #6c757d;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dee2e6;
+}
+
+.template-minimal #pdfPreviewContent .divider {
+  height: 1px;
+  background: #dee2e6;
+  margin: 1rem 0;
+}
+
+.template-minimal #pdfPreviewContent .spacer {
+  height: 1rem;
+}

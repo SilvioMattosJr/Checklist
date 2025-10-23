@@ -1,0 +1,205 @@
+/* Dropdown Menu */
+.dropdown-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.theme-toggle {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+  background: var(--primary-dark);
+  box-shadow: 0 6px 20px rgba(255, 122, 0, 0.3);
+}
+
+.dropdown-menu {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border: 2px solid var(--primary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  min-width: 250px;
+  overflow: hidden;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+body.dark .dropdown-menu {
+  background-color: #2a2a2a;
+  border-color: var(--primary);
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-menu button {
+  width: 90%;
+  margin: 0 auto;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 4px;
+  width: auto;
+  min-width: auto;
+}
+
+.dropdown-menu button:last-child {
+  margin-bottom: 0;
+}
+
+body.dark .dropdown-menu button {
+  color: var(--text-dark);
+}
+
+.dropdown-menu button:hover {
+  background-color: rgba(255, 122, 0, 0.15);
+}
+
+.dropdown-menu button i {
+  color: var(--primary);
+  font-size: 18px;
+  width: 20px;
+  text-align: center;
+}
+
+.dropdown-menu button span {
+  flex-grow: 1;
+}
+
+/* Animações de tema */
+.theme-transition * {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Scrollbar personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+body.dark ::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+body.dark ::-webkit-scrollbar-thumb {
+  background: var(--primary);
+}
+
+body.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
+
+/* Seleção de texto */
+::selection {
+  background-color: rgba(255, 122, 0, 0.3);
+  color: inherit;
+}
+
+::-moz-selection {
+  background-color: rgba(255, 122, 0, 0.3);
+  color: inherit;
+}
+
+/* Focus visible para acessibilidade */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Reduced motion para usuários que preferem menos animações */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary: #000000;
+    --primary-dark: #333333;
+    --border-light: #000000;
+    --border-dark: #ffffff;
+  }
+  
+  .card {
+    border-width: 2px;
+  }
+}
+
+/* Responsividade do dropdown */
+@media (max-width: 600px) {
+  .dropdown-container {
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  .theme-toggle {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .dropdown-menu {
+    bottom: 60px;
+    right: 0;
+    min-width: 220px;
+  }
+  
+  .dropdown-menu button {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+}

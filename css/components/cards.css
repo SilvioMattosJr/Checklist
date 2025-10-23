@@ -1,0 +1,121 @@
+/* Cards principais */
+.card {
+  background: white;
+  border-radius: var(--card-radius);
+  padding: 1.5rem 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--card-shadow);
+  transition: all 0.3s ease;
+  border: 1px solid var(--primary);
+}
+
+body.dark .card {
+  background: #2a2a2a;
+  border: 1px solid var(--primary);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 122, 0, 0.15);
+}
+
+/* Cabeçalhos dos cards */
+.card h2 {
+  text-align: center;
+  color: var(--primary);
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+}
+
+/* Headers de máquinas e infra */
+.machine-header,
+.infra-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.machine-header h2,
+.infra-header h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.btn-remove {
+  width: auto !important;
+  background-color: var(--error-color) !important;
+  padding: 8px 12px !important;
+  margin: 0 !important;
+}
+
+.btn-remove:hover {
+  background-color: #c82333 !important;
+}
+
+/* Seção do Windows */
+.windows-not-activated {
+  background: rgba(255, 122, 0, 0.05);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+body.dark .windows-not-activated {
+  background: rgba(255, 122, 0, 0.1);
+}
+
+.windows-not-activated h3 {
+  color: var(--primary);
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+/* Container de botões - ESPAÇAMENTO ADICIONADO */
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.5rem 0 1.5rem 0; /* Aumentei a margem superior para 2.5rem */
+  padding: 1.5rem 0;
+  border-top: 1px solid rgba(255, 122, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 122, 0, 0.2);
+}
+
+/* Efeito especial para o botão principal */
+#generateReportBtn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+#generateReportBtn:not(.btn-disabled) {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  box-shadow: 0 4px 15px rgba(255, 122, 0, 0.3);
+}
+
+#generateReportBtn:not(.btn-disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 122, 0, 0.4);
+}
+
+#generateReportBtn:not(.btn-disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+#generateReportBtn:not(.btn-disabled):hover::before {
+  left: 100%;
+}

@@ -1,0 +1,888 @@
+/* Grupos de input */
+.input-group {
+  margin: 1rem 0;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--primary);
+  opacity: 0.9;
+}
+
+.input-group .required-label::after {
+  content: " *";
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+/* Campos de input */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="password"],
+input[type="file"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--primary);
+  background-color: var(--input-light);
+  color: var(--text-light);
+  margin: 8px 0;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  opacity: 0.9;
+  font-family: inherit;
+}
+
+input[type="text"]::placeholder,
+textarea::placeholder {
+  color: var(--primary);
+  opacity: 0.7;
+}
+
+body.dark input[type="text"],
+body.dark input[type="email"],
+body.dark input[type="tel"],
+body.dark input[type="date"],
+body.dark input[type="password"],
+body.dark input[type="file"],
+body.dark textarea,
+body.dark select {
+  background-color: var(--input-dark);
+  border: 1px solid var(--primary);
+  color: var(--text-dark);
+}
+
+body.dark input[type="text"]::placeholder,
+body.dark textarea::placeholder {
+  color: var(--primary);
+}
+
+/* Focus states */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.1);
+  opacity: 1;
+}
+
+/* Campos inválidos */
+input.invalid,
+textarea.invalid,
+select.invalid {
+  border: 2px solid var(--error-color) !important;
+}
+
+/* Mensagens de erro */
+.error-message {
+  color: var(--error-color);
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Checkboxes e Radios */
+label {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+label:hover {
+  color: var(--primary-dark);
+}
+
+/* Estilo dos checkboxes */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--checkbox-unchecked);
+  border-radius: 4px;
+  margin-right: 8px;
+  position: relative;
+  top: -1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked::before {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Estilo dos radios */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--radio-unchecked);
+  border-radius: 50%;
+  margin-right: 8px;
+  position: relative;
+  top: -1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="radio"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Fieldset */
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+fieldset legend {
+  text-align: center;
+  color: var(--primary);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Upload de fotos */
+.photo-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 1rem 0;
+}
+
+.photo-upload-preview {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--primary);
+}
+
+/* Select estilizado */
+select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ff7a00' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 40px;
+}
+
+/* Range inputs */
+input[type="range"] {
+  width: 100%;
+  margin: 10px 0;
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: var(--checkbox-unchecked);
+  height: 6px;
+  border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Color inputs */
+input[type="color"] {
+  width: 50px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+/* Grupos de input */
+.input-group {
+  margin: 1rem 0;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--primary);
+  opacity: 0.9;
+}
+
+.input-group .required-label::after {
+  content: " *";
+  color: var(--error-color);
+  font-weight: bold;
+}
+
+/* Campos de input */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="password"],
+input[type="file"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--primary);
+  background-color: var(--input-light);
+  color: var(--text-light);
+  margin: 8px 0;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  opacity: 0.9;
+  font-family: inherit;
+}
+
+input[type="text"]::placeholder,
+textarea::placeholder {
+  color: var(--primary);
+  opacity: 0.7;
+}
+
+body.dark input[type="text"],
+body.dark input[type="email"],
+body.dark input[type="tel"],
+body.dark input[type="date"],
+body.dark input[type="password"],
+body.dark input[type="file"],
+body.dark textarea,
+body.dark select {
+  background-color: var(--input-dark);
+  border: 1px solid var(--primary);
+  color: var(--text-dark);
+}
+
+body.dark input[type="text"]::placeholder,
+body.dark textarea::placeholder {
+  color: var(--primary);
+}
+
+/* Focus states */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.1);
+  opacity: 1;
+}
+
+/* Campos inválidos */
+input.invalid,
+textarea.invalid,
+select.invalid {
+  border: 2px solid var(--error-color) !important;
+}
+
+/* Mensagens de erro */
+.error-message {
+  color: var(--error-color);
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: none;
+}
+
+/* Checkboxes e Radios */
+label {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+label:hover {
+  color: var(--primary-dark);
+}
+
+/* Estilo dos checkboxes */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--checkbox-unchecked);
+  border-radius: 4px;
+  margin-right: 8px;
+  position: relative;
+  top: -1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+input[type="checkbox"]:checked::before {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Estilo dos radios */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--radio-unchecked);
+  border-radius: 50%;
+  margin-right: 8px;
+  position: relative;
+  top: -1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="radio"]:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Fieldset */
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+fieldset legend {
+  text-align: center;
+  color: var(--primary);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+/* ===== NOVO SISTEMA DE FOTOS MÚLTIPLAS ===== */
+
+/* Container de fotos */
+.photos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+/* Item individual de foto */
+.photo-item {
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  padding: 15px;
+  background: var(--input-light);
+  transition: all 0.3s ease;
+}
+
+body.dark .photo-item {
+  background: var(--input-dark);
+  border-color: var(--primary);
+}
+
+.photo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.photo-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.btn-remove-photo {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-remove-photo:hover {
+  background: #c0392b;
+}
+
+/* Área de upload de foto */
+.photo-upload-area {
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.photo-preview-container {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  border: 2px dashed var(--primary);
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.photo-preview-container:hover {
+  border-color: var(--primary-dark);
+  background: rgba(255, 122, 0, 0.05);
+}
+
+.photo-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--primary);
+  text-align: center;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.photo-preview-container:hover .photo-placeholder {
+  opacity: 1;
+}
+
+.photo-placeholder i {
+  font-size: 24px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.photo-placeholder span {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.photo-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Botão adicionar foto */
+.add-photo-section {
+  margin-bottom: 20px;
+}
+
+.btn-add-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border: 2px dashed var(--primary);
+  border-radius: 8px;
+  background: var(--input-light);
+  color: var(--primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+body.dark .btn-add-photo {
+  background: var(--input-dark);
+}
+
+.btn-add-photo:hover {
+  background: rgba(255, 122, 0, 0.1);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.add-photo-icon {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.btn-add-photo:hover .add-photo-icon {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.btn-add-photo span {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Opções de câmera */
+.camera-options {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.btn-camera {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.btn-camera:hover {
+  background: #219a52;
+}
+
+/* Overlay da câmera */
+.camera-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.camera-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark .camera-modal {
+  background: var(--input-dark);
+  color: var(--text-dark);
+}
+
+.camera-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: var(--primary);
+  color: white;
+}
+
+.camera-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.btn-close-camera {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.btn-close-camera:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.video-container {
+  width: 100%;
+  background: #000;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-container video {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+}
+
+.camera-controls {
+  padding: 20px;
+  text-align: center;
+  background: var(--input-light);
+}
+
+body.dark .camera-controls {
+  background: var(--input-dark);
+}
+
+.btn-capture {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-capture:hover {
+  background: #c0392b;
+  transform: scale(1.05);
+}
+
+/* Campo de legenda */
+.photo-caption {
+  margin-top: 10px;
+}
+
+.photo-caption label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.photo-caption-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  font-size: 12px;
+  resize: vertical;
+  min-height: 60px;
+  background: var(--input-light);
+  color: var(--text-light);
+  font-family: inherit;
+}
+
+body.dark .photo-caption-input {
+  background: var(--input-dark);
+  color: var(--text-dark);
+  border-color: var(--primary);
+}
+
+.photo-caption-input:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.1);
+}
+
+/* Campo de observações da máquina */
+.machine-observations {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ===== SISTEMA ANTIGO DE FOTOS (MANTIDO PARA COMPATIBILIDADE) ===== */
+
+/* Upload de fotos (sistema antigo) */
+.photo-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 1rem 0;
+}
+
+.photo-upload-preview {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--primary);
+}
+
+/* Select estilizado */
+select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23ff7a00' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-right: 40px;
+}
+
+/* Range inputs */
+input[type="range"] {
+  width: 100%;
+  margin: 10px 0;
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-track {
+  background: var(--checkbox-unchecked);
+  height: 6px;
+  border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* Color inputs */
+input[type="color"] {
+  width: 50px;
+  height: 40px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .photos-container {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  
+  .photo-item {
+    padding: 10px;
+  }
+  
+  .photo-preview-container {
+    height: 120px;
+  }
+  
+  .btn-add-photo {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .camera-modal {
+    width: 95%;
+    margin: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .photos-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .photo-header h4 {
+    font-size: 13px;
+  }
+  
+  .photo-placeholder span {
+    font-size: 11px;
+  }
+  
+  .btn-add-photo {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .btn-add-photo span {
+    font-size: 11px;
+  }
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.photo-item {
+  animation: fadeIn 0.3s ease;
+}
+
+.btn-add-photo {
+  animation: fadeIn 0.5s ease;
+}
+
+/* Estados de loading */
+.photo-preview-container.loading .photo-placeholder::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}

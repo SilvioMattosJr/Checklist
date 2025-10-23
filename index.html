@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checklist – Preventivas</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff7a00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='8' y='2' width='8' height='4' rx='1' ry='1'/><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2'/><path d='M12 11h4'/><path d='M12 16h4'/><path d='M8 11h.01'/><path d='M8 16h.01'/></svg>">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/components/cards.css">
+  <link rel="stylesheet" href="css/components/modals.css">
+  <link rel="stylesheet" href="css/components/forms.css">
+  <link rel="stylesheet" href="css/components/signature.css">
+</head>
+<body>
+  <!-- Dropdown Menu -->
+  <div class="dropdown-container">
+    <button class="theme-toggle" onclick="ThemeManager.toggleDropdown()" aria-label="Menu de opções">
+      <i data-lucide="menu"></i>
+    </button>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <button onclick="ChecklistManager.addMachine(); ThemeManager.toggleDropdown();">
+        <i data-lucide="monitor-smartphone"></i>
+        <span>Adicionar Máquina</span>
+      </button>
+      <button onclick="ChecklistManager.addInfra(); ThemeManager.toggleDropdown();">
+        <i data-lucide="camera"></i>
+        <span>Adicionar Infraestrutura</span>
+      </button>
+      <button onclick="ThemeManager.toggleTheme(); ThemeManager.toggleDropdown();">
+        <i data-lucide="palette"></i>
+        <span>Trocar Tema</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <h1>Checklist – Preventivas</h1>
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    
+    <!-- Checklist Sections -->
+    <section class="card" id="arrival-section">
+      <h2><i data-lucide="user-check"></i> Ao Chegar no Cliente</h2>
+      <!-- Conteúdo será carregado dinamicamente -->
+    </section>
+    
+    <div id="machines-container"></div>
+    <div id="infraestruturas-container"></div>
+    
+    <section class="card" id="training-section">
+      <h2><i data-lucide="users"></i> Treinamento</h2>
+      <!-- Conteúdo será carregado dinamicamente -->
+    </section>
+    
+    <section class="card" id="report-section">
+      <h2><i data-lucide="file-text"></i> Observações Técnicas</h2>
+      <textarea id="observacoes" placeholder="Registrar observações técnicas e recomendações"></textarea>
+    </section>
+    
+    <!-- Signatures Section -->
+    <section class="card signatures-section" id="signatures-section">
+      <h2><i data-lucide="pen-square"></i> Assinaturas</h2>
+      <div class="signatures-container">
+        <!-- Conteúdo será carregado dinamicamente -->
+      </div>
+    </section>
+    
+    <!-- Actions -->
+    <div class="buttons-container">
+      <button id="generateReportBtn" onclick="PdfGenerator.handleGenerateReport()" class="btn-disabled">
+        <i data-lucide="file-text"></i><b>Gerar Relatório</b>
+      </button>
+    </div>
+    
+    <section class="card" id="closure-section">
+      <h2><i data-lucide="check-circle-2"></i> Encerramento</h2>
+      <!-- Conteúdo será carregado dinamicamente -->
+    </section>
+  </div>
+
+  <!-- Modal de Relatório -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Relatório de Preventiva</h3>
+      </div>
+      <div class="modal-content" id="modalReportContent"></div>
+      <div class="modal-actions">
+        <button onclick="PdfGenerator.saveAsTxt()"><i data-lucide="download"></i> Salvar como TXT</button>
+        <button onclick="PdfGenerator.saveAsPDF()"><i data-lucide="file-text"></i> Salvar como PDF</button>
+        <button onclick="PdfGenerator.copyToClipboard()"><i data-lucide="copy"></i> Copiar</button>
+        <button onclick="ModalManager.closeModal('reportModal')"><i data-lucide="x"></i> Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Campos Pendentes -->
+  <div class="modal-overlay" id="missingFieldsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Campos Obrigatórios Pendentes</h3>
+      </div>
+      <div class="modal-content">
+        <p>Por favor, preencha os seguintes campos obrigatórios antes de gerar o relatório:</p>
+        <ul class="missing-fields-list" id="missingFieldsList"></ul>
+      </div>
+      <div class="modal-actions">
+        <button onclick="ModalManager.closeModal('missingFieldsModal')">
+          <i data-lucide="check"></i> OK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Assinatura -->
+  <div class="modal-overlay" id="signatureModal" style="z-index: 3000;">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="signatureModalTitle">Assinar</h3>
+      </div>
+      <div class="modal-content">
+        <div class="signature-instructions">
+          <p><i data-lucide="info"></i> Desenhe sua assinatura no espaço abaixo</p>
+        </div>
+        <canvas id="signatureCanvas"></canvas>
+        <div class="signature-actions">
+          <button onclick="SignatureManager.clearSignatureCanvas()" class="btn-clear">
+            <i data-lucide="trash-2"></i> Limpar
+          </button>
+          <button onclick="SignatureManager.saveSignature()" class="btn-save">
+            <i data-lucide="check"></i> Salvar Assinatura
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <!-- Nossos scripts -->
+  <script src="js/utils/constants.js"></script>
+  <script src="js/utils/helpers.js"></script>
+  <script src="js/utils/storage.js"></script>
+  <script src="js/modules/modal-manager.js"></script>
+  <script src="js/modules/theme-manager.js"></script>
+  <script src="js/modules/form-validator.js"></script>
+  <script src="js/modules/checklist-manager.js"></script>
+  <script src="js/modules/signature-manager.js"></script>
+  <script src="js/modules/pdf-generator.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
